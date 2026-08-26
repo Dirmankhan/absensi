@@ -273,12 +273,17 @@ el('nextPage').addEventListener('click', () => { currentPage++; renderTable(); }
 function renderKpis() {
   const today = new Date();
   const isToday = (d) => d && d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDate() === today.getDate();
+  const todayRows = filteredRows.filter((r) => isToday(r.date));
 
   el('kpiTotal').textContent = filteredRows.length;
   el('kpiSekolah').textContent = uniqueSorted(filteredRows.map((r) => r.namaSekolah)).length;
   el('kpiKabkota').textContent = uniqueSorted(filteredRows.map((r) => r.kabKota)).length;
   el('kpiGugus').textContent = uniqueSorted(filteredRows.map((r) => r.namaGugus)).length;
-  el('kpiToday').textContent = filteredRows.filter((r) => isToday(r.date)).length;
+
+  el('kpiTotalToday').textContent = todayRows.length;
+  el('kpiSekolahToday').textContent = uniqueSorted(todayRows.map((r) => r.namaSekolah)).length;
+  el('kpiKabkotaToday').textContent = uniqueSorted(todayRows.map((r) => r.kabKota)).length;
+  el('kpiGugusToday').textContent = uniqueSorted(todayRows.map((r) => r.namaGugus)).length;
 }
 
 // ---- Export CSV --------------------------------------------------------------

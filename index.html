@@ -6,7 +6,7 @@
 <title>Dashboard Absensi Bimtek</title>
 <!-- Naikkan ?v=N di sini dan di <script> app.js setiap deploy, agar
      browser/CDN tidak menyajikan app.js atau styles.css versi lama. -->
-<link rel="stylesheet" href="styles.css?v=6" />
+<link rel="stylesheet" href="styles.css?v=7" />
 </head>
 <body>
   <div class="page">
@@ -25,7 +25,8 @@
     <main>
       <section class="banner banner-error" id="errorBanner" hidden></section>
 
-      <section class="kpi-grid" id="kpiGrid" aria-label="Ringkasan">
+      <h2 class="kpi-section-title">Akumulasi Keseluruhan</h2>
+      <section class="kpi-grid" id="kpiGrid" aria-label="Ringkasan akumulasi">
         <div class="kpi-card">
           <span class="kpi-label">Total Peserta</span>
           <span class="kpi-value" id="kpiTotal">–</span>
@@ -42,9 +43,25 @@
           <span class="kpi-label">Gugus</span>
           <span class="kpi-value" id="kpiGugus">–</span>
         </div>
+      </section>
+
+      <h2 class="kpi-section-title">Data Hari Ini</h2>
+      <section class="kpi-grid" id="kpiGridToday" aria-label="Ringkasan hari ini">
         <div class="kpi-card">
-          <span class="kpi-label">Peserta Hari Ini</span>
-          <span class="kpi-value" id="kpiToday">–</span>
+          <span class="kpi-label">Peserta</span>
+          <span class="kpi-value" id="kpiTotalToday">–</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Sekolah</span>
+          <span class="kpi-value" id="kpiSekolahToday">–</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Kab/Kota</span>
+          <span class="kpi-value" id="kpiKabkotaToday">–</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Gugus</span>
+          <span class="kpi-value" id="kpiGugusToday">–</span>
         </div>
       </section>
 
@@ -110,6 +127,6 @@
     </footer>
   </div>
 
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>
