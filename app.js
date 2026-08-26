@@ -10,11 +10,24 @@ const CONFIG = {
   pageSize: 25,
 };
 
-// Kolom yang diambil dari sheet, sesuai urutan yang diminta:
-// Timestamp, Nama Peserta, Jabatan, No Hp, Jenis Bimtek, Kab/Kota,
-// Jenjang Sekolah, NPSN, Nama Sekolah, Nama Gugus
-const SHEET_SELECT = 'select A,B,C,D,E,F,BE,BF,BG,BH';
-const FIELD_KEYS = ['timestamp', 'nama', 'jabatan', 'hp', 'jenisBimtek', 'kabKota', 'jenjang', 'npsn', 'namaSekolah', 'namaGugus'];
+// Kolom diambil berdasarkan TEKS HEADER, bukan huruf kolom (A/BE/dst).
+// Sheet ini adalah respons Google Form dengan pertanyaan bercabang per
+// Jenjang/Kab-Kota, jadi jumlah kolom perantara ("Jenjang", "NPSN - Nama
+// Sekolah") terus bertambah setiap kali ada kombinasi baru masuk — artinya
+// posisi kolom hasil akhir (Jenjang Sekolah, NPSN, dst) ikut bergeser ke
+// kanan seiring waktu. Mencocokkan berdasarkan nama header membuat ini
+// tahan terhadap pergeseran tersebut.
+const FIELD_LABELS = {
+  timestamp: 'Timestamp',
+  nama: 'Nama Peserta',
+  jabatan: 'Jabatan',
+  jenisBimtek: 'Jenis Bimtek',
+  kabKota: 'Kab/Kota',
+  jenjang: 'Jenjang Sekolah',
+  npsn: 'NPSN',
+  namaSekolah: 'Nama Sekolah',
+  namaGugus: 'Nama Gugus',
+};
 
 // ---- State --------------------------------------------------------------
 let allRows = [];
@@ -31,8 +44,10 @@ sheetLink.href = `https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/edit`
 
 // ---- Theme toggle ---------------------------------------------------------
 (function initTheme() {
+  // Default tampilan cerah/terang, tidak ikut preferensi gelap sistem,
+  // kecuali pengguna pernah memilih gelap secara manual lewat tombol.
   const saved = localStorage.getItem('absensi-theme');
-  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  document.documentElement.setAttribute('data-theme', saved || 'light');
   el('themeToggle').addEventListener('click', () => {
     const current = document.documentElement.getAttribute('data-theme');
     const next = current === 'dark' ? 'light' : 'dark';
@@ -62,8 +77,10 @@ function fetchGvizOnce(tabParam) {
       resolve(json);
     };
 
-    const tq = encodeURIComponent(SHEET_SELECT);
-    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/gviz/tq?${tabParam}&tqx=out:json;responseHandler:${callbackName}&tq=${tq}`;
+    // Tidak pakai parameter "tq" (select kolom) — ambil semua kolom apa
+    // adanya, lalu cocokkan berdasarkan teks header saat parsing. Ini
+    // menghindari ketergantungan pada huruf kolom yang bisa bergeser.
+    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/gviz/tq?${tabParam}&tqx=out:json;responseHandler:${callbackName}`;
     const script = document.createElement('script');
     script.src = url;
     script.onerror = () => {
@@ -96,16 +113,30 @@ function cellValue(cell) {
   return String(cell.v).trim();
 }
 
+function buildColumnIndex(cols) {
+  const index = {};
+  (cols || []).forEach((col, i) => {
+    if (col.label && !(col.label in index)) index[col.label] = i;
+  });
+  return index;
+}
+
 function parseGvizResponse(json) {
   if (json.status === 'error') {
     const msg = (json.errors && json.errors[0] && json.errors[0].detailed_message) || 'Format sheet tidak sesuai.';
     throw new Error(msg);
   }
   const table = json.table;
+  const colIndex = buildColumnIndex(table.cols);
+  const missing = Object.entries(FIELD_LABELS).filter(([, label]) => !(label in colIndex));
+  if (missing.length) {
+    throw new Error(`Kolom tidak ditemukan di sheet: ${missing.map(([, l]) => l).join(', ')}`);
+  }
+
   const rows = (table.rows || []).map((r) => {
     const obj = {};
-    FIELD_KEYS.forEach((key, i) => {
-      obj[key] = cellValue(r.c && r.c[i]);
+    Object.entries(FIELD_LABELS).forEach(([key, label]) => {
+      obj[key] = cellValue(r.c && r.c[colIndex[label]]);
     });
     obj.date = parseTimestamp(obj.timestamp);
     return obj;
@@ -160,7 +191,7 @@ function applyFilters() {
     if (jenjang && r.jenjang !== jenjang) return false;
     if (bimtek && r.jenisBimtek !== bimtek) return false;
     if (q) {
-      const hay = `${r.nama} ${r.namaSekolah} ${r.namaGugus} ${r.hp}`.toLowerCase();
+      const hay = `${r.nama} ${r.namaSekolah} ${r.namaGugus}`.toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
@@ -200,7 +231,7 @@ function renderTable() {
 
   const tbody = el('tableBody');
   if (pageRows.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--text-muted);padding:24px;">Tidak ada data yang cocok.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:24px;">Tidak ada data yang cocok.</td></tr>`;
     return;
   }
 
@@ -209,7 +240,6 @@ function renderTable() {
       <td>${escapeHtml(formatTimestamp(r.date))}</td>
       <td>${escapeHtml(r.nama)}</td>
       <td>${escapeHtml(r.jabatan)}</td>
-      <td>${escapeHtml(r.hp)}</td>
       <td>${escapeHtml(r.jenisBimtek)}</td>
       <td>${escapeHtml(r.kabKota)}</td>
       <td>${escapeHtml(r.jenjang)}</td>
@@ -296,12 +326,12 @@ function renderCharts() {
 
 // ---- Export CSV --------------------------------------------------------------
 function exportCsv() {
-  const header = ['Timestamp', 'Nama Peserta', 'Jabatan', 'No Hp', 'Jenis Bimtek', 'Kab/Kota', 'Jenjang Sekolah', 'NPSN', 'Nama Sekolah', 'Nama Gugus'];
+  const header = ['Timestamp', 'Nama Peserta', 'Jabatan', 'Jenis Bimtek', 'Kab/Kota', 'Jenjang Sekolah', 'NPSN', 'Nama Sekolah', 'Nama Gugus'];
   const csvEscape = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
   const lines = [header.map(csvEscape).join(',')];
   filteredRows.forEach((r) => {
     lines.push([
-      formatTimestamp(r.date), r.nama, r.jabatan, r.hp, r.jenisBimtek, r.kabKota, r.jenjang, r.npsn, r.namaSekolah, r.namaGugus,
+      formatTimestamp(r.date), r.nama, r.jabatan, r.jenisBimtek, r.kabKota, r.jenjang, r.npsn, r.namaSekolah, r.namaGugus,
     ].map(csvEscape).join(','));
   });
   const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });

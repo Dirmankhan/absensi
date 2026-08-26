@@ -5,8 +5,9 @@ secara langsung dari Google Sheets:
 
 https://docs.google.com/spreadsheets/d/1U5VCWds37zRfDwAblrBV2kwTPURpR38kZ2Hc-0GYPDc/edit
 
-Kolom yang ditampilkan: **Timestamp, Nama Peserta, Jabatan, No Hp, Jenis
-Bimtek, Kab/Kota, Jenjang Sekolah, NPSN, Nama Sekolah, Nama Gugus**.
+Kolom yang ditampilkan: **Timestamp, Nama Peserta, Jabatan, Jenis
+Bimtek, Kab/Kota, Jenjang Sekolah, NPSN, Nama Sekolah, Nama Gugus** (No Hp
+sengaja tidak ditampilkan).
 
 ## Cara kerja
 
@@ -16,10 +17,13 @@ Setiap kali dibuka (atau setiap 60 detik / tombol "Muat Ulang"), dashboard
 mengambil data terbaru dari sheet.
 
 Sheet responnya memiliki banyak kolom perantara akibat logika form
-bercabang per jenjang sekolah, tapi kolom hasil akhir yang sudah bersih
-(`Jenjang Sekolah`, `NPSN`, `Nama Sekolah`, `Nama Gugus`) berada di 4 kolom
-terakhir — itulah yang diambil aplikasi ini (kolom `BE:BH`), digabung dengan
-6 kolom awal (`A:F`).
+bercabang per jenjang sekolah dan kab/kota — setiap kali ada kombinasi baru
+yang belum pernah muncul, Google Form menambah kolom baru, sehingga jumlah
+kolom (dan posisi kolom hasil akhir) terus bertambah seiring waktu. Karena
+itu aplikasi ini **tidak** mengacu ke huruf kolom (mis. `BE`, `BH`), tapi
+mencocokkan kolom berdasarkan teks header-nya (`Timestamp`, `Nama Peserta`,
+`Jabatan`, `Jenis Bimtek`, `Kab/Kota`, `Jenjang Sekolah`, `NPSN`,
+`Nama Sekolah`, `Nama Gugus`) — jadi tetap benar walau sheet terus tumbuh.
 
 ## Syarat sheet
 
@@ -63,8 +67,8 @@ const CONFIG = {
 - Grafik: peserta per Kab/Kota, per Jenjang Sekolah, per Jenis Bimtek, dan
   10 sekolah dengan peserta terbanyak.
 - Filter: Kab/Kota, Jenjang Sekolah, Jenis Bimtek, dan pencarian bebas
-  (nama peserta/sekolah/gugus/no HP).
+  (nama peserta/sekolah/gugus).
 - Tabel data lengkap: bisa diurutkan per kolom, dipaginasi, dan diekspor
   ke CSV (mengikuti filter yang aktif).
-- Mode gelap/terang (tombol 🌓), otomatis mengikuti preferensi sistem.
+- Tampilan default cerah/terang (tombol 🌓 untuk beralih ke gelap).
 - Auto-refresh tiap 60 detik + tombol muat ulang manual.
