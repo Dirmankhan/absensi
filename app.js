@@ -4,7 +4,8 @@
 // dibaca tanpa login.
 const CONFIG = {
   sheetId: '1U5VCWds37zRfDwAblrBV2kwTPURpR38kZ2Hc-0GYPDc',
-  gid: 0, // ganti jika data absensi ada di tab/sheet lain
+  sheetName: 'Form responses 1', // nama tab persis seperti di Google Sheets
+  gid: 0, // fallback jika pencarian berdasarkan nama tab gagal
   refreshIntervalMs: 60000,
   pageSize: 25,
 };
@@ -42,12 +43,12 @@ sheetLink.href = `https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/edit`
 })();
 
 // ---- Data loading (JSONP via Google Visualization API, avoids CORS) ------
-function loadSheetData() {
+function fetchGvizOnce(tabParam) {
   return new Promise((resolve, reject) => {
-    const callbackName = 'gvizCallback_' + Date.now();
+    const callbackName = 'gvizCallback_' + Date.now() + '_' + Math.floor(Math.random() * 1e6);
     const timeout = setTimeout(() => {
       cleanup();
-      reject(new Error('Waktu permintaan habis. Periksa koneksi internet atau apakah sheet sudah dibagikan publik.'));
+      reject(new Error('Waktu permintaan habis. Periksa koneksi internet Anda.'));
     }, 15000);
 
     function cleanup() {
@@ -62,7 +63,7 @@ function loadSheetData() {
     };
 
     const tq = encodeURIComponent(SHEET_SELECT);
-    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/gviz/tq?gid=${CONFIG.gid}&tqx=out:json;responseHandler=${callbackName}&tq=${tq}`;
+    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/gviz/tq?${tabParam}&tqx=out:json;responseHandler=${callbackName}&tq=${tq}`;
     const script = document.createElement('script');
     script.src = url;
     script.onerror = () => {
@@ -71,6 +72,21 @@ function loadSheetData() {
     };
     document.body.appendChild(script);
   });
+}
+
+// Coba akses tab berdasarkan nama dulu (paling akurat), lalu fallback ke gid
+// jika nama tab berubah/tidak ditemukan.
+async function loadSheetData() {
+  const byName = `sheet=${encodeURIComponent(CONFIG.sheetName)}`;
+  try {
+    const json = await fetchGvizOnce(byName);
+    if (json.status !== 'error') return json;
+    console.warn('Gagal ambil data via nama sheet, mencoba via gid…', json);
+  } catch (err) {
+    console.warn('Gagal ambil data via nama sheet, mencoba via gid…', err);
+  }
+  const byGid = `gid=${CONFIG.gid}`;
+  return fetchGvizOnce(byGid);
 }
 
 function cellValue(cell) {
