@@ -53,7 +53,6 @@ sheetLink.href = `https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/edit`
     const next = current === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('absensi-theme', next);
-    renderCharts();
   });
 })();
 
@@ -279,51 +278,6 @@ function renderKpis() {
   el('kpiToday').textContent = filteredRows.filter((r) => isToday(r.date)).length;
 }
 
-// ---- Charts (hand-rolled horizontal bar charts, dataviz-skill compliant) --
-function countBy(rows, key) {
-  const map = new Map();
-  rows.forEach((r) => {
-    const label = r[key] || '(Tidak diisi)';
-    map.set(label, (map.get(label) || 0) + 1);
-  });
-  return Array.from(map, ([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value);
-}
-
-function renderBarChart(containerId, data, opts = {}) {
-  const container = el(containerId);
-  const topN = opts.topN || Infinity;
-  let items = data;
-  if (data.length > topN) {
-    const head = data.slice(0, topN - 1);
-    const restTotal = data.slice(topN - 1).reduce((s, d) => s + d.value, 0);
-    items = [...head, { label: 'Lainnya', value: restTotal }];
-  }
-
-  if (items.length === 0) {
-    container.innerHTML = '<div class="chart-empty">Belum ada data.</div>';
-    return;
-  }
-
-  const max = Math.max(...items.map((d) => d.value));
-  container.innerHTML = items.map((d) => {
-    const pct = max > 0 ? Math.round((d.value / max) * 100) : 0;
-    return `
-      <div class="bar-row" title="${escapeHtml(d.label)}: ${d.value}">
-        <span class="bar-label">${escapeHtml(d.label)}</span>
-        <span class="bar-track"><span class="bar-fill" style="width:${pct}%"></span></span>
-        <span class="bar-value">${d.value}</span>
-      </div>
-    `;
-  }).join('');
-}
-
-function renderCharts() {
-  renderBarChart('chartKabkota', countBy(filteredRows, 'kabKota'));
-  renderBarChart('chartJenjang', countBy(filteredRows, 'jenjang'));
-  renderBarChart('chartBimtek', countBy(filteredRows, 'jenisBimtek'));
-  renderBarChart('chartSekolah', countBy(filteredRows, 'namaSekolah'), { topN: 10 });
-}
-
 // ---- Export CSV --------------------------------------------------------------
 function exportCsv() {
   const header = ['Timestamp', 'Nama Peserta', 'Jabatan', 'Jenis Bimtek', 'Kab/Kota', 'Jenjang Sekolah', 'NPSN', 'Nama Sekolah', 'Nama Gugus'];
@@ -359,7 +313,6 @@ function hideError() {
 
 function renderAll() {
   renderKpis();
-  renderCharts();
   renderTable();
 }
 
