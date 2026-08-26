@@ -63,7 +63,7 @@ function fetchGvizOnce(tabParam) {
     };
 
     const tq = encodeURIComponent(SHEET_SELECT);
-    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/gviz/tq?${tabParam}&tqx=out:json;responseHandler=${callbackName}&tq=${tq}`;
+    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/gviz/tq?${tabParam}&tqx=out:json;responseHandler:${callbackName}&tq=${tq}`;
     const script = document.createElement('script');
     script.src = url;
     script.onerror = () => {
