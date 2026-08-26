@@ -6,7 +6,7 @@
 <title>Dashboard Absensi Bimtek</title>
 <!-- Naikkan ?v=N di sini dan di <script> app.js setiap deploy, agar
      browser/CDN tidak menyajikan app.js atau styles.css versi lama. -->
-<link rel="stylesheet" href="styles.css?v=5" />
+<link rel="stylesheet" href="styles.css?v=6" />
 </head>
 <body>
   <div class="page">
@@ -52,6 +52,10 @@
         <div class="filter-field">
           <label for="filterKabkota">Kab/Kota</label>
           <select id="filterKabkota"><option value="">Semua</option></select>
+        </div>
+        <div class="filter-field">
+          <label for="filterGugus">Nama Gugus</label>
+          <select id="filterGugus"><option value="">Semua</option></select>
         </div>
         <div class="filter-field">
           <label for="filterJenjang">Jenjang Sekolah</label>
@@ -106,6 +110,6 @@
     </footer>
   </div>
 
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

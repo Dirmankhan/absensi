@@ -164,6 +164,7 @@ function formatTimestamp(date) {
 // ---- Filters --------------------------------------------------------------
 function populateFilterOptions() {
   fillSelect('filterKabkota', uniqueSorted(allRows.map((r) => r.kabKota)));
+  fillSelect('filterGugus', uniqueSorted(allRows.map((r) => r.namaGugus)));
   fillSelect('filterJenjang', uniqueSorted(allRows.map((r) => r.jenjang)));
   fillSelect('filterBimtek', uniqueSorted(allRows.map((r) => r.jenisBimtek)));
 }
@@ -181,12 +182,14 @@ function fillSelect(id, options) {
 
 function applyFilters() {
   const kab = el('filterKabkota').value;
+  const gugus = el('filterGugus').value;
   const jenjang = el('filterJenjang').value;
   const bimtek = el('filterBimtek').value;
   const q = el('filterSearch').value.trim().toLowerCase();
 
   filteredRows = allRows.filter((r) => {
     if (kab && r.kabKota !== kab) return false;
+    if (gugus && r.namaGugus !== gugus) return false;
     if (jenjang && r.jenjang !== jenjang) return false;
     if (bimtek && r.jenisBimtek !== bimtek) return false;
     if (q) {
@@ -342,12 +345,13 @@ el('refreshBtn').addEventListener('click', refresh);
 el('exportBtn').addEventListener('click', exportCsv);
 el('resetFilters').addEventListener('click', () => {
   el('filterKabkota').value = '';
+  el('filterGugus').value = '';
   el('filterJenjang').value = '';
   el('filterBimtek').value = '';
   el('filterSearch').value = '';
   applyFilters();
 });
-['filterKabkota', 'filterJenjang', 'filterBimtek'].forEach((id) => el(id).addEventListener('change', applyFilters));
+['filterKabkota', 'filterGugus', 'filterJenjang', 'filterBimtek'].forEach((id) => el(id).addEventListener('change', applyFilters));
 el('filterSearch').addEventListener('input', debounce(applyFilters, 200));
 
 function debounce(fn, ms) {
