@@ -22,6 +22,7 @@ const FIELD_LABELS = {
   nama: 'Nama Peserta',
   jabatan: 'Jabatan',
   jenisBimtek: 'Jenis Bimtek',
+  tempatBimtek: 'Tempat Pelaksanaan Bimtek',
   kabKota: 'Kab/Kota',
   jenjang: 'Jenjang Sekolah',
   npsn: 'NPSN',
@@ -167,6 +168,7 @@ function populateFilterOptions() {
   fillSelect('filterGugus', uniqueSorted(allRows.map((r) => r.namaGugus)));
   fillSelect('filterJenjang', uniqueSorted(allRows.map((r) => r.jenjang)));
   fillSelect('filterBimtek', uniqueSorted(allRows.map((r) => r.jenisBimtek)));
+  fillSelect('filterTempat', uniqueSorted(allRows.map((r) => r.tempatBimtek)));
 }
 
 function uniqueSorted(list) {
@@ -185,6 +187,7 @@ function applyFilters() {
   const gugus = el('filterGugus').value;
   const jenjang = el('filterJenjang').value;
   const bimtek = el('filterBimtek').value;
+  const tempat = el('filterTempat').value;
   const q = el('filterSearch').value.trim().toLowerCase();
 
   filteredRows = allRows.filter((r) => {
@@ -192,6 +195,7 @@ function applyFilters() {
     if (gugus && r.namaGugus !== gugus) return false;
     if (jenjang && r.jenjang !== jenjang) return false;
     if (bimtek && r.jenisBimtek !== bimtek) return false;
+    if (tempat && r.tempatBimtek !== tempat) return false;
     if (q) {
       const hay = `${r.nama} ${r.namaSekolah} ${r.namaGugus}`.toLowerCase();
       if (!hay.includes(q)) return false;
@@ -353,10 +357,11 @@ el('resetFilters').addEventListener('click', () => {
   el('filterGugus').value = '';
   el('filterJenjang').value = '';
   el('filterBimtek').value = '';
+  el('filterTempat').value = '';
   el('filterSearch').value = '';
   applyFilters();
 });
-['filterKabkota', 'filterGugus', 'filterJenjang', 'filterBimtek'].forEach((id) => el(id).addEventListener('change', applyFilters));
+['filterKabkota', 'filterGugus', 'filterJenjang', 'filterBimtek', 'filterTempat'].forEach((id) => el(id).addEventListener('change', applyFilters));
 el('filterSearch').addEventListener('input', debounce(applyFilters, 200));
 
 function debounce(fn, ms) {
