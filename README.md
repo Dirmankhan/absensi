@@ -69,8 +69,10 @@ const CONFIG = {
 - Filter: Kab/Kota, Nama Gugus, Jenjang Sekolah, Jenis Bimtek, Tempat
   Pelaksanaan Bimtek, dan Tanggal Pelaksanaan (berdasarkan tanggal pada
   Timestamp).
-- Tabel "Sekolah & Jenis Bimtek Hari Ini": daftar unik sekolah, tempat
-  pelaksanaan, dan jenis bimtek untuk hari berjalan (mengikuti filter aktif).
+- Tabel "Tempat Pelaksanaan Bimtek Hari Ini": satu kolom per Jenis Bimtek
+  (Bimtek Tata Kelola (SPMI), Bimtek Literasi Numerasi, Bimtek Digitalisasi
+  Pembelajaran), berisi daftar unik Tempat Pelaksanaan Bimtek untuk hari
+  berjalan saja (mengikuti filter aktif).
 - Tabel data lengkap: bisa diurutkan per kolom, dipaginasi, dan diekspor
   ke CSV (mengikuti filter yang aktif).
 - Tampilan default cerah/terang dengan tema biru muda (tombol 🌓 untuk

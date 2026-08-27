@@ -313,9 +313,8 @@ function renderKpis() {
 }
 
 // ---- Tempat pelaksanaan bimtek hari ini, per jenis bimtek ----------------
-// Field "Tempat Pelaksanaan Bimtek" di sheet masih hampir selalu kosong
-// (baru ditambahkan ke form), jadi nama sekolah dipakai sebagai penanda
-// tempat pelaksanaan — satu kolom per jenis bimtek, urutan tetap.
+// Diambil dari kolom "Tempat Pelaksanaan Bimtek" di sheet, dibatasi hanya
+// data hari berjalan — satu kolom per jenis bimtek, urutan tetap.
 const JENIS_BIMTEK_COLUMNS = [
   'Bimtek Tata Kelola (SPMI)',
   'Bimtek Literasi Numerasi',
@@ -326,12 +325,12 @@ function renderTodaySchedule() {
   const todayRows = getTodayRows();
   const columns = JENIS_BIMTEK_COLUMNS.map((jenis) => ({
     jenis,
-    schools: uniqueSorted(todayRows.filter((r) => r.jenisBimtek === jenis).map((r) => r.namaSekolah)),
+    tempat: uniqueSorted(todayRows.filter((r) => r.jenisBimtek === jenis).map((r) => r.tempatBimtek)),
   }));
-  const maxRows = Math.max(0, ...columns.map((c) => c.schools.length));
-  const totalSekolah = uniqueSorted(todayRows.map((r) => r.namaSekolah)).length;
+  const maxRows = Math.max(0, ...columns.map((c) => c.tempat.length));
+  const totalTempat = uniqueSorted(todayRows.map((r) => r.tempatBimtek)).length;
 
-  el('todayScheduleCount').textContent = totalSekolah;
+  el('todayScheduleCount').textContent = totalTempat;
   el('todayScheduleHead').innerHTML = `<tr>${columns.map((c) => `<th>${escapeHtml(c.jenis)}</th>`).join('')}</tr>`;
 
   const tbody = el('todayScheduleBody');
@@ -341,7 +340,7 @@ function renderTodaySchedule() {
   }
   let rowsHtml = '';
   for (let i = 0; i < maxRows; i++) {
-    rowsHtml += `<tr>${columns.map((c) => `<td>${escapeHtml(c.schools[i] || '')}</td>`).join('')}</tr>`;
+    rowsHtml += `<tr>${columns.map((c) => `<td>${escapeHtml(c.tempat[i] || '')}</td>`).join('')}</tr>`;
   }
   tbody.innerHTML = rowsHtml;
 }
