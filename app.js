@@ -312,32 +312,38 @@ function renderKpis() {
   el('kpiGugusToday').textContent = uniqueSorted(todayRows.map((r) => r.namaGugus)).length;
 }
 
-// ---- Jadwal bimtek hari ini (sekolah + tempat + jenis bimtek) ------------
+// ---- Tempat pelaksanaan bimtek hari ini, per jenis bimtek ----------------
+// Field "Tempat Pelaksanaan Bimtek" di sheet masih hampir selalu kosong
+// (baru ditambahkan ke form), jadi nama sekolah dipakai sebagai penanda
+// tempat pelaksanaan — satu kolom per jenis bimtek, urutan tetap.
+const JENIS_BIMTEK_COLUMNS = [
+  'Bimtek Tata Kelola (SPMI)',
+  'Bimtek Literasi Numerasi',
+  'Bimtek Digitalisasi Pembelajaran',
+];
+
 function renderTodaySchedule() {
   const todayRows = getTodayRows();
-  const seen = new Set();
-  const items = [];
-  todayRows.forEach((r) => {
-    const key = `${r.namaSekolah}|${r.tempatBimtek}|${r.jenisBimtek}`;
-    if (seen.has(key)) return;
-    seen.add(key);
-    items.push({ namaSekolah: r.namaSekolah, tempatBimtek: r.tempatBimtek, jenisBimtek: r.jenisBimtek });
-  });
-  items.sort((a, b) => a.namaSekolah.localeCompare(b.namaSekolah, 'id'));
+  const columns = JENIS_BIMTEK_COLUMNS.map((jenis) => ({
+    jenis,
+    schools: uniqueSorted(todayRows.filter((r) => r.jenisBimtek === jenis).map((r) => r.namaSekolah)),
+  }));
+  const maxRows = Math.max(0, ...columns.map((c) => c.schools.length));
+  const totalSekolah = uniqueSorted(todayRows.map((r) => r.namaSekolah)).length;
 
-  el('todayScheduleCount').textContent = items.length;
+  el('todayScheduleCount').textContent = totalSekolah;
+  el('todayScheduleHead').innerHTML = `<tr>${columns.map((c) => `<th>${escapeHtml(c.jenis)}</th>`).join('')}</tr>`;
+
   const tbody = el('todayScheduleBody');
-  if (items.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:24px;">Belum ada bimtek hari ini.</td></tr>`;
+  if (maxRows === 0) {
+    tbody.innerHTML = `<tr><td colspan="${columns.length}" style="text-align:center;color:var(--text-muted);padding:24px;">Belum ada bimtek hari ini.</td></tr>`;
     return;
   }
-  tbody.innerHTML = items.map((it) => `
-    <tr>
-      <td>${escapeHtml(it.namaSekolah)}</td>
-      <td>${escapeHtml(it.tempatBimtek)}</td>
-      <td>${escapeHtml(it.jenisBimtek)}</td>
-    </tr>
-  `).join('');
+  let rowsHtml = '';
+  for (let i = 0; i < maxRows; i++) {
+    rowsHtml += `<tr>${columns.map((c) => `<td>${escapeHtml(c.schools[i] || '')}</td>`).join('')}</tr>`;
+  }
+  tbody.innerHTML = rowsHtml;
 }
 
 // ---- Export CSV --------------------------------------------------------------
