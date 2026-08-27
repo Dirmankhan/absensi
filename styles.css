@@ -194,9 +194,6 @@ body {
   color: var(--text-primary);
   min-width: 160px;
 }
-.filter-search { flex: 1; min-width: 200px; }
-.filter-search input { width: 100%; }
-
 .table-card {
   background: var(--surface-1);
   border: 1px solid var(--border);

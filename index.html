@@ -6,7 +6,7 @@
 <title>Dashboard Absensi Bimtek</title>
 <!-- Naikkan ?v=N di sini dan di <script> app.js setiap deploy, agar
      browser/CDN tidak menyajikan app.js atau styles.css versi lama. -->
-<link rel="stylesheet" href="styles.css?v=8" />
+<link rel="stylesheet" href="styles.css?v=9" />
 </head>
 <body>
   <div class="page">
@@ -86,11 +86,31 @@
           <label for="filterTempat">Tempat Pelaksanaan Bimtek</label>
           <select id="filterTempat"><option value="">Semua</option></select>
         </div>
-        <div class="filter-field filter-search">
-          <label for="filterSearch">Cari</label>
-          <input id="filterSearch" type="search" placeholder="Nama peserta, sekolah, gugus…" />
+        <div class="filter-field">
+          <label for="filterTanggal">Tanggal Pelaksanaan</label>
+          <select id="filterTanggal"><option value="">Semua</option></select>
         </div>
         <button class="btn btn-ghost" id="resetFilters" type="button">Reset Filter</button>
+      </section>
+
+      <section class="table-card" aria-label="Jadwal bimtek hari ini">
+        <div class="table-toolbar">
+          <h2>Sekolah &amp; Jenis Bimtek Hari Ini (<span id="todayScheduleCount">0</span>)</h2>
+        </div>
+        <div class="table-scroll">
+          <table id="todayScheduleTable">
+            <thead>
+              <tr>
+                <th>Nama Sekolah</th>
+                <th>Tempat Pelaksanaan Bimtek</th>
+                <th>Jenis Bimtek</th>
+              </tr>
+            </thead>
+            <tbody id="todayScheduleBody">
+              <tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:24px;">Memuat data…</td></tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section class="table-card" aria-label="Data absensi">
@@ -131,6 +151,6 @@
     </footer>
   </div>
 
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>

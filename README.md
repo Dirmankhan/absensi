@@ -6,8 +6,8 @@ secara langsung dari Google Sheets:
 https://docs.google.com/spreadsheets/d/1U5VCWds37zRfDwAblrBV2kwTPURpR38kZ2Hc-0GYPDc/edit
 
 Kolom yang ditampilkan: **Timestamp, Nama Peserta, Jabatan, Jenis
-Bimtek, Kab/Kota, Jenjang Sekolah, NPSN, Nama Sekolah, Nama Gugus** (No Hp
-sengaja tidak ditampilkan).
+Bimtek, Tempat Pelaksanaan Bimtek, Kab/Kota, Jenjang Sekolah, NPSN,
+Nama Sekolah, Nama Gugus** (No Hp sengaja tidak ditampilkan).
 
 ## Cara kerja
 
@@ -22,8 +22,9 @@ yang belum pernah muncul, Google Form menambah kolom baru, sehingga jumlah
 kolom (dan posisi kolom hasil akhir) terus bertambah seiring waktu. Karena
 itu aplikasi ini **tidak** mengacu ke huruf kolom (mis. `BE`, `BH`), tapi
 mencocokkan kolom berdasarkan teks header-nya (`Timestamp`, `Nama Peserta`,
-`Jabatan`, `Jenis Bimtek`, `Kab/Kota`, `Jenjang Sekolah`, `NPSN`,
-`Nama Sekolah`, `Nama Gugus`) — jadi tetap benar walau sheet terus tumbuh.
+`Jabatan`, `Jenis Bimtek`, `Tempat Pelaksanaan Bimtek`, `Kab/Kota`,
+`Jenjang Sekolah`, `NPSN`, `Nama Sekolah`, `Nama Gugus`) — jadi tetap benar
+walau sheet terus tumbuh.
 
 ## Syarat sheet
 
@@ -62,13 +63,16 @@ const CONFIG = {
 
 ## Fitur
 
-- KPI ringkasan: total peserta, jumlah sekolah, jumlah kab/kota, jumlah
-  gugus, dan peserta hari ini.
-- Grafik: peserta per Kab/Kota, per Jenjang Sekolah, per Jenis Bimtek, dan
-  10 sekolah dengan peserta terbanyak.
-- Filter: Kab/Kota, Jenjang Sekolah, Jenis Bimtek, dan pencarian bebas
-  (nama peserta/sekolah/gugus).
+- KPI ringkasan dalam dua baris: **Akumulasi Keseluruhan** (total peserta,
+  sekolah, kab/kota, gugus) dan **Data Hari Ini** (metrik yang sama, hanya
+  untuk hari berjalan).
+- Filter: Kab/Kota, Nama Gugus, Jenjang Sekolah, Jenis Bimtek, Tempat
+  Pelaksanaan Bimtek, dan Tanggal Pelaksanaan (berdasarkan tanggal pada
+  Timestamp).
+- Tabel "Sekolah & Jenis Bimtek Hari Ini": daftar unik sekolah, tempat
+  pelaksanaan, dan jenis bimtek untuk hari berjalan (mengikuti filter aktif).
 - Tabel data lengkap: bisa diurutkan per kolom, dipaginasi, dan diekspor
   ke CSV (mengikuti filter yang aktif).
-- Tampilan default cerah/terang (tombol 🌓 untuk beralih ke gelap).
+- Tampilan default cerah/terang dengan tema biru muda (tombol 🌓 untuk
+  beralih ke gelap).
 - Auto-refresh tiap 60 detik + tombol muat ulang manual.

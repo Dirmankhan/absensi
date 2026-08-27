@@ -169,6 +169,24 @@ function populateFilterOptions() {
   fillSelect('filterJenjang', uniqueSorted(allRows.map((r) => r.jenjang)));
   fillSelect('filterBimtek', uniqueSorted(allRows.map((r) => r.jenisBimtek)));
   fillSelect('filterTempat', uniqueSorted(allRows.map((r) => r.tempatBimtek)));
+  fillSelect('filterTanggal', uniqueDatesSorted(allRows.map((r) => r.date)));
+}
+
+// Tanggal unik (dd/mm/yyyy) diurutkan secara kronologis, bukan alfabetis,
+// dan diformat ulang dari objek Date agar urutannya benar.
+function uniqueDatesSorted(dates) {
+  const byKey = new Map();
+  dates.forEach((d) => {
+    if (!d) return;
+    const key = formatDateOnly(d);
+    if (!byKey.has(key)) byKey.set(key, d.getTime());
+  });
+  return Array.from(byKey.entries()).sort((a, b) => a[1] - b[1]).map(([key]) => key);
+}
+
+function formatDateOnly(date) {
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
 }
 
 function uniqueSorted(list) {
@@ -188,7 +206,7 @@ function applyFilters() {
   const jenjang = el('filterJenjang').value;
   const bimtek = el('filterBimtek').value;
   const tempat = el('filterTempat').value;
-  const q = el('filterSearch').value.trim().toLowerCase();
+  const tanggal = el('filterTanggal').value;
 
   filteredRows = allRows.filter((r) => {
     if (kab && r.kabKota !== kab) return false;
@@ -196,10 +214,7 @@ function applyFilters() {
     if (jenjang && r.jenjang !== jenjang) return false;
     if (bimtek && r.jenisBimtek !== bimtek) return false;
     if (tempat && r.tempatBimtek !== tempat) return false;
-    if (q) {
-      const hay = `${r.nama} ${r.namaSekolah} ${r.namaGugus}`.toLowerCase();
-      if (!hay.includes(q)) return false;
-    }
+    if (tanggal && (!r.date || formatDateOnly(r.date) !== tanggal)) return false;
     return true;
   });
 
@@ -274,10 +289,17 @@ el('prevPage').addEventListener('click', () => { currentPage--; renderTable(); }
 el('nextPage').addEventListener('click', () => { currentPage++; renderTable(); });
 
 // ---- KPIs --------------------------------------------------------------
-function renderKpis() {
+function isSameDay(a, b) {
+  return !!a && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+
+function getTodayRows() {
   const today = new Date();
-  const isToday = (d) => d && d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDate() === today.getDate();
-  const todayRows = filteredRows.filter((r) => isToday(r.date));
+  return filteredRows.filter((r) => isSameDay(r.date, today));
+}
+
+function renderKpis() {
+  const todayRows = getTodayRows();
 
   el('kpiTotal').textContent = filteredRows.length;
   el('kpiSekolah').textContent = uniqueSorted(filteredRows.map((r) => r.namaSekolah)).length;
@@ -288,6 +310,34 @@ function renderKpis() {
   el('kpiSekolahToday').textContent = uniqueSorted(todayRows.map((r) => r.namaSekolah)).length;
   el('kpiKabkotaToday').textContent = uniqueSorted(todayRows.map((r) => r.kabKota)).length;
   el('kpiGugusToday').textContent = uniqueSorted(todayRows.map((r) => r.namaGugus)).length;
+}
+
+// ---- Jadwal bimtek hari ini (sekolah + tempat + jenis bimtek) ------------
+function renderTodaySchedule() {
+  const todayRows = getTodayRows();
+  const seen = new Set();
+  const items = [];
+  todayRows.forEach((r) => {
+    const key = `${r.namaSekolah}|${r.tempatBimtek}|${r.jenisBimtek}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    items.push({ namaSekolah: r.namaSekolah, tempatBimtek: r.tempatBimtek, jenisBimtek: r.jenisBimtek });
+  });
+  items.sort((a, b) => a.namaSekolah.localeCompare(b.namaSekolah, 'id'));
+
+  el('todayScheduleCount').textContent = items.length;
+  const tbody = el('todayScheduleBody');
+  if (items.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:24px;">Belum ada bimtek hari ini.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = items.map((it) => `
+    <tr>
+      <td>${escapeHtml(it.namaSekolah)}</td>
+      <td>${escapeHtml(it.tempatBimtek)}</td>
+      <td>${escapeHtml(it.jenisBimtek)}</td>
+    </tr>
+  `).join('');
 }
 
 // ---- Export CSV --------------------------------------------------------------
@@ -325,6 +375,7 @@ function hideError() {
 
 function renderAll() {
   renderKpis();
+  renderTodaySchedule();
   renderTable();
 }
 
@@ -358,19 +409,10 @@ el('resetFilters').addEventListener('click', () => {
   el('filterJenjang').value = '';
   el('filterBimtek').value = '';
   el('filterTempat').value = '';
-  el('filterSearch').value = '';
+  el('filterTanggal').value = '';
   applyFilters();
 });
-['filterKabkota', 'filterGugus', 'filterJenjang', 'filterBimtek', 'filterTempat'].forEach((id) => el(id).addEventListener('change', applyFilters));
-el('filterSearch').addEventListener('input', debounce(applyFilters, 200));
-
-function debounce(fn, ms) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
-  };
-}
+['filterKabkota', 'filterGugus', 'filterJenjang', 'filterBimtek', 'filterTempat', 'filterTanggal'].forEach((id) => el(id).addEventListener('change', applyFilters));
 
 refresh();
 refreshTimer = setInterval(refresh, CONFIG.refreshIntervalMs);
