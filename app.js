@@ -168,7 +168,7 @@ function populateFilterOptions() {
   fillSelect('filterGugus', uniqueSorted(allRows.map((r) => r.namaGugus)));
   fillSelect('filterJenjang', uniqueSorted(allRows.map((r) => r.jenjang)));
   fillSelect('filterBimtek', uniqueSorted(allRows.map((r) => r.jenisBimtek)));
-  fillSelect('filterTempat', uniqueSorted(allRows.map((r) => r.tempatBimtek)));
+  fillSelect('filterTempat', dedupeSimilarTempat(allRows.map((r) => r.tempatBimtek)));
   fillSelect('filterTanggal', uniqueDatesSorted(allRows.map((r) => r.date)));
 }
 
@@ -213,7 +213,7 @@ function applyFilters() {
     if (gugus && r.namaGugus !== gugus) return false;
     if (jenjang && r.jenjang !== jenjang) return false;
     if (bimtek && r.jenisBimtek !== bimtek) return false;
-    if (tempat && r.tempatBimtek !== tempat) return false;
+    if (tempat && normalizeTempatKey(r.tempatBimtek) !== normalizeTempatKey(tempat)) return false;
     if (tanggal && (!r.date || formatDateOnly(r.date) !== tanggal)) return false;
     return true;
   });
@@ -321,14 +321,63 @@ const JENIS_BIMTEK_COLUMNS = [
   'Bimtek Digitalisasi Pembelajaran',
 ];
 
+// Peserta sering menulis nama tempat/sekolah dengan ejaan berbeda-beda
+// (huruf besar/kecil, "SMPN" vs "SMP Negeri" vs "SMP", spasi hilang, dst).
+// Fungsi ini meratakan variasi PENULISAN itu ke satu kunci pembanding,
+// tapi tetap mempertahankan angka & kata lain apa adanya — jadi tempat
+// yang benar-benar berbeda (mis. "Moyo Hilir" vs "Moyo Utara") tidak
+// pernah tergabung, hanya ejaan dari tempat yang SAMA yang disatukan.
+const SCHOOL_LEVEL_PREFIXES = ['SD', 'SMP', 'SMA', 'SMK', 'MTS', 'MI', 'MA', 'TK', 'PAUD', 'SKB', 'PKBM'];
+
+function normalizeTempatKey(raw) {
+  if (!raw) return '';
+  let s = raw.toUpperCase();
+  s = s.replace(/([A-Z])(\d)/g, '$1 $2').replace(/(\d)([A-Z])/g, '$1 $2');
+  SCHOOL_LEVEL_PREFIXES.forEach((p) => {
+    s = s.replace(new RegExp(`\\b${p}N\\b`, 'g'), p);
+  });
+  s = s.replace(/\bNEGERI\b/g, ' ');
+  SCHOOL_LEVEL_PREFIXES.forEach((p) => {
+    s = s.replace(new RegExp(`\\b${p}\\s+N\\b`, 'g'), p);
+  });
+  return s.replace(/[^A-Z0-9]/g, '');
+}
+
+// Dari sekelompok ejaan yang dianggap sama, pakai versi yang paling
+// sering ditulis sebagai representasi tampilan.
+function pickMostFrequent(rawValues) {
+  const counts = new Map();
+  rawValues.forEach((raw) => counts.set(raw, (counts.get(raw) || 0) + 1));
+  let best = rawValues[0];
+  let bestCount = -1;
+  counts.forEach((count, raw) => {
+    if (count > bestCount) { bestCount = count; best = raw; }
+  });
+  return best;
+}
+
+function dedupeSimilarTempat(values) {
+  const groups = new Map();
+  values.forEach((raw) => {
+    if (!raw) return;
+    const key = normalizeTempatKey(raw);
+    if (!key) return;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(raw);
+  });
+  const result = [];
+  groups.forEach((rawList) => result.push(pickMostFrequent(rawList)));
+  return result.sort((a, b) => a.localeCompare(b, 'id'));
+}
+
 function renderTodaySchedule() {
   const todayRows = getTodayRows();
   const columns = JENIS_BIMTEK_COLUMNS.map((jenis) => ({
     jenis,
-    tempat: uniqueSorted(todayRows.filter((r) => r.jenisBimtek === jenis).map((r) => r.tempatBimtek)),
+    tempat: dedupeSimilarTempat(todayRows.filter((r) => r.jenisBimtek === jenis).map((r) => r.tempatBimtek)),
   }));
   const maxRows = Math.max(0, ...columns.map((c) => c.tempat.length));
-  const totalTempat = uniqueSorted(todayRows.map((r) => r.tempatBimtek)).length;
+  const totalTempat = dedupeSimilarTempat(todayRows.map((r) => r.tempatBimtek)).length;
 
   el('todayScheduleCount').textContent = totalTempat;
   el('todayScheduleHead').innerHTML = `<tr>${columns.map((c) => `<th>${escapeHtml(c.jenis)}</th>`).join('')}</tr>`;
