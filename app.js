@@ -371,7 +371,12 @@ function dedupeSimilarTempat(values) {
 }
 
 function renderTodaySchedule() {
-  const todayRows = getTodayRows();
+  let todayRows = getTodayRows();
+  const q = el('filterTodaySchedule').value.trim().toLowerCase();
+  if (q) {
+    todayRows = todayRows.filter((r) => r.npsn.toLowerCase().includes(q) || r.namaSekolah.toLowerCase().includes(q));
+  }
+
   const columns = JENIS_BIMTEK_COLUMNS.map((jenis) => ({
     jenis,
     tempat: dedupeSimilarTempat(todayRows.filter((r) => r.jenisBimtek === jenis).map((r) => r.tempatBimtek)),
@@ -384,7 +389,8 @@ function renderTodaySchedule() {
 
   const tbody = el('todayScheduleBody');
   if (maxRows === 0) {
-    tbody.innerHTML = `<tr><td colspan="${columns.length}" style="text-align:center;color:var(--text-muted);padding:24px;">Belum ada bimtek hari ini.</td></tr>`;
+    const emptyMsg = q ? 'Tidak ada hasil untuk pencarian tersebut.' : 'Belum ada bimtek hari ini.';
+    tbody.innerHTML = `<tr><td colspan="${columns.length}" style="text-align:center;color:var(--text-muted);padding:24px;">${escapeHtml(emptyMsg)}</td></tr>`;
     return;
   }
   let rowsHtml = '';
@@ -467,6 +473,15 @@ el('resetFilters').addEventListener('click', () => {
   applyFilters();
 });
 ['filterKabkota', 'filterGugus', 'filterJenjang', 'filterBimtek', 'filterTempat', 'filterTanggal'].forEach((id) => el(id).addEventListener('change', applyFilters));
+
+function debounce(fn, ms) {
+  let t;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), ms);
+  };
+}
+el('filterTodaySchedule').addEventListener('input', debounce(renderTodaySchedule, 200));
 
 refresh();
 refreshTimer = setInterval(refresh, CONFIG.refreshIntervalMs);

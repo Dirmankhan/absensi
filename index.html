@@ -6,7 +6,7 @@
 <title>Dashboard Absensi Bimtek</title>
 <!-- Naikkan ?v=N di sini dan di <script> app.js setiap deploy, agar
      browser/CDN tidak menyajikan app.js atau styles.css versi lama. -->
-<link rel="stylesheet" href="styles.css?v=12" />
+<link rel="stylesheet" href="styles.css?v=13" />
 </head>
 <body>
   <div class="page">
@@ -96,6 +96,7 @@
       <section class="table-card" aria-label="Tempat pelaksanaan bimtek hari ini per jenis">
         <div class="table-toolbar">
           <h2>Tempat Pelaksanaan Bimtek Hari Ini (<span id="todayScheduleCount">0</span> tempat)</h2>
+          <input id="filterTodaySchedule" type="search" placeholder="Cari NPSN atau nama sekolah…" />
         </div>
         <div class="table-scroll">
           <table id="todayScheduleTable">
@@ -145,6 +146,6 @@
     </footer>
   </div>
 
-  <script src="app.js?v=12"></script>
+  <script src="app.js?v=13"></script>
 </body>
 </html>

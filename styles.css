@@ -210,6 +210,15 @@ body {
   gap: 8px;
 }
 .table-toolbar h2 { margin: 0; font-size: 1rem; }
+.table-toolbar input[type="search"] {
+  font: inherit;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-primary);
+  min-width: 220px;
+}
 .table-scroll { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
 th, td {
