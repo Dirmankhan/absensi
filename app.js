@@ -241,13 +241,22 @@ function sortRows() {
   });
 }
 
+// Pencarian NPSN/nama sekolah khusus tabel Data Absensi — tidak
+// memengaruhi KPI atau tabel Tempat Pelaksanaan Bimtek Hari Ini.
+function getDataTableRows() {
+  const q = el('filterDataTable').value.trim().toLowerCase();
+  if (!q) return filteredRows;
+  return filteredRows.filter((r) => r.npsn.toLowerCase().includes(q) || r.namaSekolah.toLowerCase().includes(q));
+}
+
 function renderTable() {
-  const totalPages = Math.max(1, Math.ceil(filteredRows.length / CONFIG.pageSize));
+  const rows = getDataTableRows();
+  const totalPages = Math.max(1, Math.ceil(rows.length / CONFIG.pageSize));
   currentPage = Math.min(currentPage, totalPages);
   const start = (currentPage - 1) * CONFIG.pageSize;
-  const pageRows = filteredRows.slice(start, start + CONFIG.pageSize);
+  const pageRows = rows.slice(start, start + CONFIG.pageSize);
 
-  el('tableCount').textContent = filteredRows.length;
+  el('tableCount').textContent = rows.length;
   el('pageInfo').textContent = `Halaman ${currentPage} dari ${totalPages}`;
 
   const tbody = el('tableBody');
@@ -371,12 +380,7 @@ function dedupeSimilarTempat(values) {
 }
 
 function renderTodaySchedule() {
-  let todayRows = getTodayRows();
-  const q = el('filterTodaySchedule').value.trim().toLowerCase();
-  if (q) {
-    todayRows = todayRows.filter((r) => r.npsn.toLowerCase().includes(q) || r.namaSekolah.toLowerCase().includes(q));
-  }
-
+  const todayRows = getTodayRows();
   const columns = JENIS_BIMTEK_COLUMNS.map((jenis) => ({
     jenis,
     tempat: dedupeSimilarTempat(todayRows.filter((r) => r.jenisBimtek === jenis).map((r) => r.tempatBimtek)),
@@ -389,8 +393,7 @@ function renderTodaySchedule() {
 
   const tbody = el('todayScheduleBody');
   if (maxRows === 0) {
-    const emptyMsg = q ? 'Tidak ada hasil untuk pencarian tersebut.' : 'Belum ada bimtek hari ini.';
-    tbody.innerHTML = `<tr><td colspan="${columns.length}" style="text-align:center;color:var(--text-muted);padding:24px;">${escapeHtml(emptyMsg)}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="${columns.length}" style="text-align:center;color:var(--text-muted);padding:24px;">Belum ada bimtek hari ini.</td></tr>`;
     return;
   }
   let rowsHtml = '';
@@ -405,7 +408,7 @@ function exportCsv() {
   const header = ['Timestamp', 'Nama Peserta', 'Jabatan', 'Jenis Bimtek', 'Kab/Kota', 'Jenjang Sekolah', 'NPSN', 'Nama Sekolah', 'Nama Gugus'];
   const csvEscape = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
   const lines = [header.map(csvEscape).join(',')];
-  filteredRows.forEach((r) => {
+  getDataTableRows().forEach((r) => {
     lines.push([
       formatTimestamp(r.date), r.nama, r.jabatan, r.jenisBimtek, r.kabKota, r.jenjang, r.npsn, r.namaSekolah, r.namaGugus,
     ].map(csvEscape).join(','));
@@ -481,7 +484,7 @@ function debounce(fn, ms) {
     t = setTimeout(() => fn(...args), ms);
   };
 }
-el('filterTodaySchedule').addEventListener('input', debounce(renderTodaySchedule, 200));
+el('filterDataTable').addEventListener('input', debounce(() => { currentPage = 1; renderTable(); }, 200));
 
 refresh();
 refreshTimer = setInterval(refresh, CONFIG.refreshIntervalMs);
