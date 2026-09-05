@@ -9,9 +9,11 @@ masing-masing membaca sheet sumber yang berbeda:
 - **dikmen.html** — Jenjang **Dikmen** (SMA, SMK, SLB):
   https://docs.google.com/spreadsheets/d/10q5lThIX8ZQSNzLjgharF95ah0MUKxNSKFC4YbDMBEQ/edit
 
-Kolom yang ditampilkan: **Timestamp, Nama Peserta, Jabatan, Jenis
-Bimtek, Tempat Pelaksanaan Bimtek, Kab/Kota, Jenjang Sekolah, NPSN,
-Nama Sekolah, Nama Gugus** (No Hp sengaja tidak ditampilkan).
+Kolom yang ditampilkan di tabel Data Absensi: **Nama Peserta, Jabatan,
+Jenis Bimtek, Kab/Kota, Jenjang Sekolah, NPSN, Nama Sekolah, Nama
+Gugus** (No Hp dan Timestamp sengaja tidak ditampilkan; Timestamp
+tetap dibaca secara internal untuk KPI hari ini dan filter Tanggal
+Pelaksanaan).
 
 ## Cara kerja
 

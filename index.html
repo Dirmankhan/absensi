@@ -6,7 +6,7 @@
 <title>Dashboard Absensi Bimtek</title>
 <!-- Naikkan ?v=N di sini dan di <script> app.js setiap deploy, agar
      browser/CDN tidak menyajikan app.js atau styles.css versi lama. -->
-<link rel="stylesheet" href="styles.css?v=17" />
+<link rel="stylesheet" href="styles.css?v=18" />
 </head>
 <body>
   <div class="page">
@@ -77,29 +77,31 @@
       </section>
 
       <section class="filter-bar" aria-label="Filter data">
-        <div class="filter-field">
-          <label for="filterKabkota">Kab/Kota</label>
-          <select id="filterKabkota"><option value="">Semua</option></select>
-        </div>
-        <div class="filter-field">
-          <label for="filterGugus">Nama Gugus</label>
-          <select id="filterGugus"><option value="">Semua</option></select>
-        </div>
-        <div class="filter-field">
-          <label for="filterJenjang">Jenjang Sekolah</label>
-          <select id="filterJenjang"><option value="">Semua</option></select>
-        </div>
-        <div class="filter-field">
-          <label for="filterBimtek">Jenis Bimtek</label>
-          <select id="filterBimtek"><option value="">Semua</option></select>
-        </div>
-        <div class="filter-field">
-          <label for="filterTempat">Tempat Pelaksanaan Bimtek</label>
-          <select id="filterTempat"><option value="">Semua</option></select>
-        </div>
-        <div class="filter-field">
-          <label for="filterTanggal">Tanggal Pelaksanaan</label>
-          <select id="filterTanggal"><option value="">Semua</option></select>
+        <div class="filter-grid">
+          <div class="filter-field">
+            <label for="filterKabkota">Kab/Kota</label>
+            <select id="filterKabkota"><option value="">Semua</option></select>
+          </div>
+          <div class="filter-field">
+            <label for="filterGugus">Nama Gugus</label>
+            <select id="filterGugus"><option value="">Semua</option></select>
+          </div>
+          <div class="filter-field">
+            <label for="filterJenjang">Jenjang Sekolah</label>
+            <select id="filterJenjang"><option value="">Semua</option></select>
+          </div>
+          <div class="filter-field">
+            <label for="filterBimtek">Jenis Bimtek</label>
+            <select id="filterBimtek"><option value="">Semua</option></select>
+          </div>
+          <div class="filter-field">
+            <label for="filterTempat">Tempat Pelaksanaan Bimtek</label>
+            <select id="filterTempat"><option value="">Semua</option></select>
+          </div>
+          <div class="filter-field">
+            <label for="filterTanggal">Tanggal Pelaksanaan</label>
+            <select id="filterTanggal"><option value="">Semua</option></select>
+          </div>
         </div>
         <button class="btn btn-ghost" id="resetFilters" type="button">Reset Filter</button>
       </section>
@@ -128,7 +130,6 @@
           <table id="dataTable">
             <thead>
               <tr>
-                <th data-key="timestamp">Timestamp</th>
                 <th data-key="nama">Nama Peserta</th>
                 <th data-key="jabatan">Jabatan</th>
                 <th data-key="jenisBimtek">Jenis Bimtek</th>
@@ -140,7 +141,7 @@
               </tr>
             </thead>
             <tbody id="tableBody">
-              <tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:24px;">Memuat data…</td></tr>
+              <tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px;">Memuat data…</td></tr>
             </tbody>
           </table>
         </div>
@@ -163,6 +164,6 @@
       sheetName: 'Form responses 1',
     };
   </script>
-  <script src="app.js?v=17"></script>
+  <script src="app.js?v=18"></script>
 </body>
 </html>

@@ -314,13 +314,12 @@ function renderTable() {
 
   const tbody = el('tableBody');
   if (pageRows.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:24px;">Tidak ada data yang cocok.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px;">Tidak ada data yang cocok.</td></tr>`;
     return;
   }
 
   tbody.innerHTML = pageRows.map((r) => `
     <tr>
-      <td>${escapeHtml(formatTimestamp(r.date))}</td>
       <td>${escapeHtml(r.nama)}</td>
       <td>${escapeHtml(r.jabatan)}</td>
       <td>${escapeHtml(r.jenisBimtek)}</td>
