@@ -566,7 +566,7 @@ async function refresh() {
     const { rows, label } = parseGvizResponse(json);
     allRows = rows;
     hideError();
-    el('sheetTitle').textContent = label ? label : 'Data absensi peserta bimtek';
+    el('sheetTitle').textContent = label ? label : 'Berdasarkan pengisian tautan kehadiran melalui Google Form';
     populateFilterOptions();
     applyFilters();
     el('syncStatus').textContent = `Tersinkron ${formatTimestamp(new Date())}`;
