@@ -190,8 +190,8 @@ body {
 }
 
 .filter-bar {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   align-items: end;
   gap: 12px;
   background: var(--surface-1);
@@ -206,17 +206,19 @@ body {
   gap: 4px;
   font-size: 0.82rem;
   color: var(--text-secondary);
+  min-width: 0; /* izinkan select menyusut, bukan mendorong lebar kolom grid */
 }
 .filter-field select,
 .filter-field input {
   font: inherit;
+  width: 100%;
   padding: 7px 10px;
   border-radius: 8px;
   border: 1px solid var(--border);
   background: var(--surface-2);
   color: var(--text-primary);
-  min-width: 160px;
 }
+#resetFilters { justify-self: start; }
 .table-card {
   background: var(--surface-1);
   border: 1px solid var(--border);
