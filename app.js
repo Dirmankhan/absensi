@@ -374,6 +374,68 @@ function renderKpis() {
   el('kpiGugusToday').textContent = uniqueSorted(todayRows.map((r) => r.namaGugus)).length;
 }
 
+// ---- Diagram lingkaran: peserta per jabatan ------------------------------
+const PIE_SLICE_CLASSES = ['pie-slice-1', 'pie-slice-2', 'pie-slice-3', 'pie-slice-4', 'pie-slice-other'];
+
+function polarToXY(cx, cy, r, angleDeg) {
+  const rad = (angleDeg * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+function pieSlicePath(cx, cy, r, startAngle, endAngle) {
+  const start = polarToXY(cx, cy, r, startAngle);
+  const end = polarToXY(cx, cy, r, endAngle);
+  const largeArc = endAngle - startAngle > 180 ? 1 : 0;
+  return `M ${cx} ${cy} L ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 1 ${end.x} ${end.y} Z`;
+}
+
+function renderJabatanChart() {
+  const counts = new Map();
+  filteredRows.forEach((r) => {
+    const label = r.jabatan || '(Tidak diisi)';
+    counts.set(label, (counts.get(label) || 0) + 1);
+  });
+  let items = Array.from(counts, ([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value);
+  const MAX_SLICES = 4;
+  if (items.length > MAX_SLICES) {
+    const head = items.slice(0, MAX_SLICES - 1);
+    const restTotal = items.slice(MAX_SLICES - 1).reduce((s, d) => s + d.value, 0);
+    items = [...head, { label: 'Lainnya', value: restTotal }];
+  }
+  const total = items.reduce((s, d) => s + d.value, 0);
+
+  const svg = el('jabatanChart');
+  const legend = el('jabatanChartLegend');
+  if (total === 0) {
+    svg.innerHTML = '';
+    legend.innerHTML = '<span>Belum ada data.</span>';
+    return;
+  }
+
+  const cx = 50, cy = 50, r = 48;
+  let angle = -90;
+  let svgHtml = '';
+  items.forEach((item, i) => {
+    const sliceClass = i < MAX_SLICES ? PIE_SLICE_CLASSES[i] : PIE_SLICE_CLASSES[PIE_SLICE_CLASSES.length - 1];
+    const fraction = item.value / total;
+    const nextAngle = fraction >= 0.9999 ? angle + 359.99 : angle + fraction * 360;
+    svgHtml += `<path class="${sliceClass}" d="${pieSlicePath(cx, cy, r, angle, nextAngle)}"><title>${escapeHtml(item.label)}: ${item.value}</title></path>`;
+    angle = nextAngle;
+  });
+  svg.innerHTML = svgHtml;
+
+  legend.innerHTML = items.map((item, i) => {
+    const sliceClass = i < MAX_SLICES ? PIE_SLICE_CLASSES[i] : PIE_SLICE_CLASSES[PIE_SLICE_CLASSES.length - 1];
+    return `
+      <span class="legend-row" title="${escapeHtml(item.label)}: ${item.value}">
+        <span class="legend-dot ${sliceClass}"></span>
+        <span>${escapeHtml(item.label)}</span>
+        <span class="legend-count">${item.value}</span>
+      </span>
+    `;
+  }).join('');
+}
+
 // ---- Tempat pelaksanaan bimtek hari ini, per jenis bimtek ----------------
 // Diambil dari kolom "Tempat Pelaksanaan Bimtek" di sheet, dibatasi hanya
 // data hari berjalan — satu kolom per jenis bimtek, urutan tetap.
@@ -491,6 +553,7 @@ function hideError() {
 
 function renderAll() {
   renderKpis();
+  renderJabatanChart();
   renderTodaySchedule();
   renderTable();
 }

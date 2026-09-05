@@ -86,7 +86,8 @@ setiap halaman (termasuk halaman baru itu sendiri).
   navigasi tab di bagian atas.
 - KPI ringkasan dalam dua baris: **Akumulasi Keseluruhan** (total peserta,
   sekolah, kab/kota, gugus) dan **Data Hari Ini** (metrik yang sama, hanya
-  untuk hari berjalan).
+  untuk hari berjalan). Di sebelah kiri baris Akumulasi Keseluruhan terdapat
+  diagram lingkaran jumlah peserta per jabatan (mengikuti filter yang aktif).
 - Filter: Kab/Kota, Nama Gugus, Jenjang Sekolah, Jenis Bimtek, Tempat
   Pelaksanaan Bimtek, dan Tanggal Pelaksanaan (berdasarkan tanggal pada
   Timestamp).

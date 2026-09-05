@@ -6,7 +6,7 @@
 <title>Dashboard Absensi Bimtek — Dikmen</title>
 <!-- Naikkan ?v=N di sini dan di <script> app.js setiap deploy, agar
      browser/CDN tidak menyajikan app.js atau styles.css versi lama. -->
-<link rel="stylesheet" href="styles.css?v=16" />
+<link rel="stylesheet" href="styles.css?v=17" />
 </head>
 <body>
   <div class="page">
@@ -31,24 +31,30 @@
       <section class="banner banner-error" id="errorBanner" hidden></section>
 
       <h2 class="kpi-section-title">Akumulasi Keseluruhan</h2>
-      <section class="kpi-grid" id="kpiGrid" aria-label="Ringkasan akumulasi">
-        <div class="kpi-card">
-          <span class="kpi-label">Total Peserta</span>
-          <span class="kpi-value" id="kpiTotal">–</span>
+      <div class="kpi-row">
+        <div class="jabatan-chart-card" aria-label="Peserta per jabatan">
+          <svg id="jabatanChart" viewBox="0 0 100 100" role="img" aria-label="Diagram peserta per jabatan"></svg>
+          <div class="jabatan-chart-legend" id="jabatanChartLegend"></div>
         </div>
-        <div class="kpi-card">
-          <span class="kpi-label">Sekolah Terdaftar</span>
-          <span class="kpi-value" id="kpiSekolah">–</span>
-        </div>
-        <div class="kpi-card">
-          <span class="kpi-label">Kab/Kota</span>
-          <span class="kpi-value" id="kpiKabkota">–</span>
-        </div>
-        <div class="kpi-card">
-          <span class="kpi-label">Gugus</span>
-          <span class="kpi-value" id="kpiGugus">–</span>
-        </div>
-      </section>
+        <section class="kpi-grid" id="kpiGrid" aria-label="Ringkasan akumulasi">
+          <div class="kpi-card">
+            <span class="kpi-label">Total Peserta</span>
+            <span class="kpi-value" id="kpiTotal">–</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Sekolah Terdaftar</span>
+            <span class="kpi-value" id="kpiSekolah">–</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Kab/Kota</span>
+            <span class="kpi-value" id="kpiKabkota">–</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">Gugus</span>
+            <span class="kpi-value" id="kpiGugus">–</span>
+          </div>
+        </section>
+      </div>
 
       <h2 class="kpi-section-title">Data Hari Ini</h2>
       <section class="kpi-grid" id="kpiGridToday" aria-label="Ringkasan hari ini">
@@ -157,6 +163,6 @@
       sheetName: 'Form responses 1',
     };
   </script>
-  <script src="app.js?v=16"></script>
+  <script src="app.js?v=17"></script>
 </body>
 </html>

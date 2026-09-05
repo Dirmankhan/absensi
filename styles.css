@@ -162,31 +162,89 @@ body {
   letter-spacing: 0.04em;
 }
 
+.kpi-row {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.kpi-row .kpi-grid { flex: 1; margin-bottom: 0; }
+
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
   margin-bottom: 20px;
 }
 .kpi-card {
   background: var(--surface-1);
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 16px;
+  padding: 10px 12px;
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 .kpi-label {
-  font-size: 0.8rem;
+  font-size: 0.74rem;
   color: var(--text-secondary);
 }
 .kpi-value {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--series-1);
+}
+
+/* Diagram lingkaran peserta per jabatan, disandingkan di kiri KPI */
+.jabatan-chart-card {
+  flex: 0 0 240px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.jabatan-chart-card svg { flex: 0 0 auto; width: 76px; height: 76px; }
+.jabatan-chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+  min-width: 0;
+}
+.jabatan-chart-legend .legend-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.jabatan-chart-legend .legend-dot {
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+.jabatan-chart-legend .legend-count {
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.pie-slice-1 { fill: var(--series-1); }
+.pie-slice-2 { fill: var(--series-2); }
+.pie-slice-3 { fill: var(--series-3); }
+.pie-slice-4 { fill: var(--series-4); }
+.pie-slice-other { fill: var(--text-muted); }
+@media (max-width: 720px) {
+  .kpi-row { flex-direction: column; }
+  .jabatan-chart-card { flex-basis: auto; }
 }
 
 .filter-bar {
