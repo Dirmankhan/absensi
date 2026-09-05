@@ -1,34 +1,42 @@
 // ---- Configuration ----------------------------------------------------
-// Ganti sheetId jika ingin memakai Google Sheet lain. Sheet WAJIB dibagikan
-// sebagai "Siapa saja yang memiliki link" (Anyone with the link) agar bisa
-// dibaca tanpa login.
-const CONFIG = {
+// Sheet WAJIB dibagikan sebagai "Siapa saja yang memiliki link" (Anyone
+// with the link) agar bisa dibaca tanpa login. Setiap halaman (index.html
+// untuk Dikdas, dikmen.html untuk Dikmen) menimpa CONFIG lewat
+// window.DASHBOARD_CONFIG sebelum memuat app.js ini, jadi satu app.js yang
+// sama dipakai untuk kedua halaman.
+const CONFIG = Object.assign({
   sheetId: '1U5VCWds37zRfDwAblrBV2kwTPURpR38kZ2Hc-0GYPDc',
   sheetName: 'Form responses 1', // nama tab persis seperti di Google Sheets
   gid: 0, // fallback jika pencarian berdasarkan nama tab gagal
   refreshIntervalMs: 60000,
   pageSize: 25,
-};
+}, window.DASHBOARD_CONFIG || {});
 
 // Kolom diambil berdasarkan TEKS HEADER, bukan huruf kolom (A/BE/dst).
 // Sheet ini adalah respons Google Form dengan pertanyaan bercabang per
 // Jenjang/Kab-Kota, jadi jumlah kolom perantara ("Jenjang", "NPSN - Nama
 // Sekolah") terus bertambah setiap kali ada kombinasi baru masuk — artinya
-// posisi kolom hasil akhir (Jenjang Sekolah, NPSN, dst) ikut bergeser ke
-// kanan seiring waktu. Mencocokkan berdasarkan nama header membuat ini
-// tahan terhadap pergeseran tersebut.
-const FIELD_LABELS = {
+// posisi kolom hasil akhir ikut bergeser ke kanan seiring waktu.
+// Mencocokkan berdasarkan nama header membuat ini tahan terhadap
+// pergeseran tersebut.
+//
+// Kolom sederhana (satu label unik, satu nilai per baris):
+const SIMPLE_FIELD_LABELS = {
   timestamp: 'Timestamp',
   nama: 'Nama Peserta',
   jabatan: 'Jabatan',
   jenisBimtek: 'Jenis Bimtek',
   tempatBimtek: 'Tempat Pelaksanaan Bimtek',
   kabKota: 'Kab/Kota',
-  jenjang: 'Jenjang Sekolah',
-  npsn: 'NPSN',
-  namaSekolah: 'Nama Sekolah',
-  namaGugus: 'Nama Gugus',
 };
+// Kolom hasil akhir (Jenjang/NPSN/Nama Sekolah/Nama Gugus) BERBEDA bentuk
+// antar sheet: sheet Dikdas punya kolom "Jenjang Sekolah" tersendiri yang
+// sudah diresolusi dari cabang form, sedangkan sheet Dikmen memakai label
+// "Jenjang" yang sama persis dengan kolom cabangnya (hanya beda posisi),
+// dan sebagian sheet mungkin tidak punya kolom hasil akhir sama sekali
+// (mis. "Nama Gugus" tidak selalu ada). Fungsi resolveXxx di bawah
+// menangani ketiga kemungkinan itu tanpa perlu tahu sheet mana yang
+// sedang dibuka.
 
 // ---- State --------------------------------------------------------------
 let allRows = [];
@@ -113,12 +121,51 @@ function cellValue(cell) {
   return String(cell.v).trim();
 }
 
-function buildColumnIndex(cols) {
+// Peta label -> daftar SEMUA index kolom dengan label itu (bisa lebih
+// dari satu, mis. "Jenjang" muncul berkali-kali sebagai kolom cabang).
+function buildColumnIndexAll(cols) {
   const index = {};
   (cols || []).forEach((col, i) => {
-    if (col.label && !(col.label in index)) index[col.label] = i;
+    if (!col.label) return;
+    if (!index[col.label]) index[col.label] = [];
+    index[col.label].push(i);
   });
   return index;
+}
+
+function firstNonEmpty(byLabel, label, cellArr) {
+  const idxs = byLabel[label];
+  if (!idxs) return null;
+  for (const i of idxs) {
+    const v = cellValue(cellArr[i]);
+    if (v) return v;
+  }
+  return null;
+}
+
+// Jenjang: pakai kolom hasil akhir "Jenjang Sekolah" jika ada (Dikdas);
+// jika tidak ada, kolom hasil akhir Dikmen memakai label "Jenjang" yang
+// sama dengan kolom cabangnya, jadi cari nilai pertama yang tidak kosong
+// di antara semua kolom berlabel "Jenjang" (cabang + hasil akhir sama-sama
+// terisi dengan nilai yang sama untuk baris valid).
+function resolveJenjang(byLabel, cellArr) {
+  return firstNonEmpty(byLabel, 'Jenjang Sekolah', cellArr) || firstNonEmpty(byLabel, 'Jenjang', cellArr) || '';
+}
+
+// NPSN & Nama Sekolah: pakai kolom hasil akhir terpisah jika ada. Jika
+// sheet tidak punya kolom hasil akhir sama sekali, jatuh ke kolom cabang
+// gabungan "NPSN - Nama Sekolah" dan pisahkan pada " - " pertama.
+function resolveNpsnSekolah(byLabel, cellArr) {
+  const npsn = firstNonEmpty(byLabel, 'NPSN', cellArr);
+  const namaSekolah = firstNonEmpty(byLabel, 'Nama Sekolah', cellArr);
+  if (npsn !== null || namaSekolah !== null) {
+    return { npsn: npsn || '', namaSekolah: namaSekolah || '' };
+  }
+  const combined = firstNonEmpty(byLabel, 'NPSN - Nama Sekolah', cellArr);
+  if (!combined) return { npsn: '', namaSekolah: '' };
+  const sep = combined.indexOf(' - ');
+  if (sep === -1) return { npsn: '', namaSekolah: combined };
+  return { npsn: combined.slice(0, sep).trim(), namaSekolah: combined.slice(sep + 3).trim() };
 }
 
 function parseGvizResponse(json) {
@@ -127,17 +174,23 @@ function parseGvizResponse(json) {
     throw new Error(msg);
   }
   const table = json.table;
-  const colIndex = buildColumnIndex(table.cols);
-  const missing = Object.entries(FIELD_LABELS).filter(([, label]) => !(label in colIndex));
+  const byLabel = buildColumnIndexAll(table.cols);
+  const missing = Object.entries(SIMPLE_FIELD_LABELS).filter(([, label]) => !byLabel[label]);
   if (missing.length) {
     throw new Error(`Kolom tidak ditemukan di sheet: ${missing.map(([, l]) => l).join(', ')}`);
   }
 
   const rows = (table.rows || []).map((r) => {
+    const c = r.c || [];
     const obj = {};
-    Object.entries(FIELD_LABELS).forEach(([key, label]) => {
-      obj[key] = cellValue(r.c && r.c[colIndex[label]]);
+    Object.entries(SIMPLE_FIELD_LABELS).forEach(([key, label]) => {
+      obj[key] = cellValue(c[byLabel[label][0]]);
     });
+    obj.jenjang = resolveJenjang(byLabel, c);
+    const { npsn, namaSekolah } = resolveNpsnSekolah(byLabel, c);
+    obj.npsn = npsn;
+    obj.namaSekolah = namaSekolah;
+    obj.namaGugus = firstNonEmpty(byLabel, 'Nama Gugus', c) || '';
     obj.date = parseTimestamp(obj.timestamp);
     return obj;
   }).filter((row) => row.nama); // buang baris kosong

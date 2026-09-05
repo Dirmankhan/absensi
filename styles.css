@@ -80,7 +80,30 @@ body {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
+  margin-bottom: 12px;
+}
+.page-nav {
+  display: flex;
+  gap: 8px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.page-nav-link {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.page-nav-link:hover { color: var(--text-primary); }
+.page-nav-link.is-active {
+  background: var(--series-1);
+  border-color: transparent;
+  color: #fff;
 }
 .topbar-title h1 {
   margin: 0 0 4px;
