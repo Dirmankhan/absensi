@@ -322,6 +322,9 @@ th, td {
   border-bottom: 1px solid var(--gridline);
   white-space: nowrap;
 }
+th.count-col, td.count-col {
+  text-align: center;
+}
 th {
   color: var(--text-secondary);
   font-weight: 600;

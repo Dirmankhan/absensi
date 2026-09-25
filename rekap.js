@@ -250,9 +250,9 @@ function renderTable() {
       <td>${escapeHtml(r.namaSekolah)}</td>
       <td>${escapeHtml(r.jenjang)}</td>
       <td>${escapeHtml(r.status)}</td>
-      <td>${r.counts[0]}</td>
-      <td>${r.counts[1]}</td>
-      <td>${r.counts[2]}</td>
+      <td class="count-col">${r.counts[0]}</td>
+      <td class="count-col">${r.counts[1]}</td>
+      <td class="count-col">${r.counts[2]}</td>
     </tr>
   `).join('');
 }

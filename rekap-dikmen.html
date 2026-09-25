@@ -12,7 +12,7 @@
 <title>Rekap Kehadiran per Sekolah — Dikmen</title>
 <!-- Naikkan ?v=N di sini dan di <script> rekap.js setiap deploy, agar
      browser/CDN tidak menyajikan rekap.js atau styles.css versi lama. -->
-<link rel="stylesheet" href="styles.css?v=20" />
+<link rel="stylesheet" href="styles.css?v=21" />
 </head>
 <body>
   <div class="page">
@@ -29,7 +29,7 @@
     </header>
 
     <nav class="page-nav view-nav" aria-label="Pilih tampilan">
-      <a href="dikmen.html" class="page-nav-link">Dashboard</a>
+      <a href="dikmen.html" class="page-nav-link">Data Peserta</a>
       <a href="rekap-dikmen.html" class="page-nav-link is-active">Rekap Sekolah</a>
     </nav>
     <nav class="page-nav" aria-label="Pilih jenjang">
@@ -54,9 +54,9 @@
                 <th data-key="namaSekolah">Nama Sekolah</th>
                 <th data-key="jenjang">Jenjang</th>
                 <th data-key="status">Status</th>
-                <th data-key="c0">Bimtek Tata Kelola (SPMI)</th>
-                <th data-key="c1">Bimtek Literasi Numerasi</th>
-                <th data-key="c2">Bimtek Digitalisasi Pembelajaran</th>
+                <th data-key="c0" class="count-col">Bimtek Tata Kelola (SPMI)</th>
+                <th data-key="c1" class="count-col">Bimtek Literasi Numerasi</th>
+                <th data-key="c2" class="count-col">Bimtek Digitalisasi Pembelajaran</th>
               </tr>
             </thead>
             <tbody id="tableBody">
@@ -84,6 +84,6 @@
       refSheetName: 'ref',
     };
   </script>
-  <script src="rekap.js?v=2"></script>
+  <script src="rekap.js?v=3"></script>
 </body>
 </html>
