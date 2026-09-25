@@ -93,20 +93,24 @@ setiap halaman (termasuk halaman baru itu sendiri).
 `rekap-dikdas.html` dan `rekap-dikmen.html` (dipakai bersama lewat
 `rekap.js`, terpisah dari `app.js` karena bentuk datanya beda) menampilkan
 satu baris per sekolah dengan kolom: Kabupaten, NPSN, Nama Sekolah, Jenjang,
-Status, Nama Gugus, dan jumlah peserta untuk tiap Jenis Bimtek (Bimtek Tata
-Kelola (SPMI), Bimtek Literasi Numerasi, Bimtek Digitalisasi Pembelajaran).
+Status, Nama Gugus, lalu Tanggal + jumlah peserta berpasangan untuk tiap
+Jenis Bimtek (Tanggal Bimtek Tata Kelola (SPMI) & Bimtek Tata Kelola
+(SPMI), Tanggal Bimtek Literasi Numerasi & Bimtek Literasi Numerasi,
+Tanggal Bimtek Digitalisasi Pembelajaran & Bimtek Digitalisasi
+Pembelajaran).
 
-Data sekolah (Kabupaten, NPSN, Jenjang, Status, Nama Sekolah, Nama Gugus)
-diambil dari tab **`ref`** di masing-masing spreadsheet — sheet referensi
-terpisah dari `Form responses 1`, berisi daftar resmi sekolah (mis. data
-BOS/BOSP). Kolom yang dipakai dari tab ini tetap di posisi D–H (Kab/Kota,
-NPSN, Jenjang, Status, Nama Sekolah) dan R (Gugus Belajar → Nama Gugus)
-berdasarkan huruf kolom, karena sheet ini data referensi statis (bukan
-hasil form bercabang seperti `Form responses 1`) sehingga posisinya
-stabil. Baris header (jika ada — sebagian tab `ref`
-punya baris header, sebagian tidak) otomatis terdeteksi dan dibuang: baris
-yang nilai NPSN-nya bukan berupa angka (atau "P" + angka untuk PKBM)
-dianggap bukan data sekolah.
+Data sekolah (Kabupaten, NPSN, Jenjang, Status, Nama Sekolah, Nama Gugus,
+Tanggal Bimtek per jenis) diambil dari tab **`ref`** di masing-masing
+spreadsheet — sheet referensi terpisah dari `Form responses 1`, berisi
+daftar resmi sekolah (mis. data BOS/BOSP). Kolom yang dipakai dari tab ini
+tetap di posisi D–H (Kab/Kota, NPSN, Jenjang, Status, Nama Sekolah), R
+(Gugus Belajar → Nama Gugus), dan U–W (Tanggal Bimtek Tata Kelola (SPMI) /
+Literasi Numerasi / Digitalisasi Pembelajaran) berdasarkan huruf kolom,
+karena sheet ini data referensi statis (bukan hasil form bercabang seperti
+`Form responses 1`) sehingga posisinya stabil. Baris header (jika ada —
+sebagian tab `ref` punya baris header, sebagian tidak) otomatis terdeteksi
+dan dibuang: baris yang nilai NPSN-nya bukan berupa angka (atau "P" +
+angka untuk PKBM) dianggap bukan data sekolah.
 
 Jumlah peserta per sekolah dihitung dari tab `Form responses 1`,
 dikelompokkan berdasarkan NPSN peserta (dicocokkan dengan kolom hasil akhir

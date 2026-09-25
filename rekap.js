@@ -153,10 +153,12 @@ function countAttendanceByNpsn(json) {
 // Sheet ref: data referensi sekolah pada kolom D-H yang tetap (Kab/Kota,
 // NPSN, Jenjang, Status, Nama Sekolah) — bukan hasil form bercabang, jadi
 // posisinya stabil dan aman diambil berdasarkan huruf kolom. Kolom "Gugus
-// Belajar" (R) dipakai sebagai Nama Gugus. Sebagian sheet ref punya baris
-// header, sebagian tidak; baris yang NPSN-nya bukan angka (atau "P" +
-// angka untuk PKBM) — misalnya baris header "NPSN" — otomatis dibuang,
-// begitu juga duplikat NPSN yang sama.
+// Belajar" (R) dipakai sebagai Nama Gugus, dan kolom U/V/W dipakai sebagai
+// Tanggal Bimtek per jenis (Tata Kelola/Literasi Numerasi/Digitalisasi
+// Pembelajaran). Sebagian sheet ref punya baris header, sebagian tidak;
+// baris yang NPSN-nya bukan angka (atau "P" + angka untuk PKBM) — misalnya
+// baris header "NPSN" — otomatis dibuang, begitu juga duplikat NPSN yang
+// sama.
 function parseRefSheet(json) {
   const table = json.table;
   const rows = (table.rows || []).map((r) => {
@@ -168,6 +170,9 @@ function parseRefSheet(json) {
       status: cellValue(c[6]),
       namaSekolah: cellValue(c[7]),
       namaGugus: cellValue(c[17]),
+      tanggalSpmi: cellValue(c[20]),
+      tanggalLiterasi: cellValue(c[21]),
+      tanggalDigitalisasi: cellValue(c[22]),
     };
   });
   const valid = rows.filter((r) => /^(P\d{4,}|\d{4,})$/i.test(r.npsn));
@@ -242,7 +247,7 @@ function renderTable() {
 
   const tbody = el('tableBody');
   if (pageRows.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:24px;">Tidak ada data yang cocok.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;color:var(--text-muted);padding:24px;">Tidak ada data yang cocok.</td></tr>`;
     return;
   }
 
@@ -254,8 +259,11 @@ function renderTable() {
       <td>${escapeHtml(r.jenjang)}</td>
       <td>${escapeHtml(r.status)}</td>
       <td>${escapeHtml(r.namaGugus)}</td>
+      <td class="count-col">${escapeHtml(r.tanggalSpmi)}</td>
       <td class="count-col">${r.counts[0]}</td>
+      <td class="count-col">${escapeHtml(r.tanggalLiterasi)}</td>
       <td class="count-col">${r.counts[1]}</td>
+      <td class="count-col">${escapeHtml(r.tanggalDigitalisasi)}</td>
       <td class="count-col">${r.counts[2]}</td>
     </tr>
   `).join('');
