@@ -252,11 +252,11 @@ function renderTable() {
   tbody.innerHTML = pageRows.map((r) => `
     <tr>
       <td class="wrap-col">${escapeHtml(r.kabKota)}</td>
+      <td>${escapeHtml(r.namaGugus)}</td>
       <td>${escapeHtml(r.npsn)}</td>
       <td class="wrap-col">${escapeHtml(r.namaSekolah)}</td>
       <td>${escapeHtml(r.jenjang)}</td>
       <td>${escapeHtml(r.status)}</td>
-      <td>${escapeHtml(r.namaGugus)}</td>
       <td class="count-col">${escapeHtml(r.tanggalSpmi)}</td>
       <td class="count-col">${r.counts[0]}</td>
       <td class="count-col">${escapeHtml(r.tanggalLiterasi)}</td>
@@ -271,7 +271,7 @@ function renderTable() {
 // aktif tapi tidak dibatasi paginasi, hanya berjalan saat tombol diklik.
 function exportExcel() {
   const header = [
-    'Kabupaten', 'NPSN', 'Nama Sekolah', 'Jenjang', 'Status', 'Nama Gugus',
+    'Kabupaten', 'Nama Gugus', 'NPSN', 'Nama Sekolah', 'Jenjang', 'Status',
     'Tanggal Bimtek Tata Kelola (SPMI)', 'Jumlah Peserta Bimtek Tata Kelola (SPMI)',
     'Tanggal Bimtek Literasi Numerasi', 'Jumlah Peserta Bimtek Literasi Numerasi',
     'Tanggal Bimtek Digitalisasi Pembelajaran', 'Jumlah Peserta Bimtek Digitalisasi Pembelajaran',
@@ -280,7 +280,7 @@ function exportExcel() {
   const lines = [header.map(csvEscape).join(',')];
   getRows().forEach((r) => {
     lines.push([
-      r.kabKota, r.npsn, r.namaSekolah, r.jenjang, r.status, r.namaGugus,
+      r.kabKota, r.namaGugus, r.npsn, r.namaSekolah, r.jenjang, r.status,
       r.tanggalSpmi, r.counts[0], r.tanggalLiterasi, r.counts[1], r.tanggalDigitalisasi, r.counts[2],
     ].map(csvEscape).join(','));
   });
