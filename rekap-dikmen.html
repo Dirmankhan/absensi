@@ -12,7 +12,7 @@
 <title>Rekap Kehadiran per Sekolah — Dikmen</title>
 <!-- Naikkan ?v=N di sini dan di <script> rekap.js setiap deploy, agar
      browser/CDN tidak menyajikan rekap.js atau styles.css versi lama. -->
-<link rel="stylesheet" href="styles.css?v=21" />
+<link rel="stylesheet" href="styles.css?v=22" />
 </head>
 <body>
   <div class="page">
@@ -54,13 +54,14 @@
                 <th data-key="namaSekolah">Nama Sekolah</th>
                 <th data-key="jenjang">Jenjang</th>
                 <th data-key="status">Status</th>
+                <th data-key="namaGugus">Nama Gugus</th>
                 <th data-key="c0" class="count-col">Bimtek Tata Kelola (SPMI)</th>
                 <th data-key="c1" class="count-col">Bimtek Literasi Numerasi</th>
                 <th data-key="c2" class="count-col">Bimtek Digitalisasi Pembelajaran</th>
               </tr>
             </thead>
             <tbody id="tableBody">
-              <tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px;">Memuat data…</td></tr>
+              <tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:24px;">Memuat data…</td></tr>
             </tbody>
           </table>
         </div>
@@ -84,6 +85,6 @@
       refSheetName: 'ref',
     };
   </script>
-  <script src="rekap.js?v=3"></script>
+  <script src="rekap.js?v=4"></script>
 </body>
 </html>

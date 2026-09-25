@@ -93,16 +93,17 @@ setiap halaman (termasuk halaman baru itu sendiri).
 `rekap-dikdas.html` dan `rekap-dikmen.html` (dipakai bersama lewat
 `rekap.js`, terpisah dari `app.js` karena bentuk datanya beda) menampilkan
 satu baris per sekolah dengan kolom: Kabupaten, NPSN, Nama Sekolah, Jenjang,
-Status, dan jumlah peserta untuk tiap Jenis Bimtek (Bimtek Tata Kelola
-(SPMI), Bimtek Literasi Numerasi, Bimtek Digitalisasi Pembelajaran).
+Status, Nama Gugus, dan jumlah peserta untuk tiap Jenis Bimtek (Bimtek Tata
+Kelola (SPMI), Bimtek Literasi Numerasi, Bimtek Digitalisasi Pembelajaran).
 
-Data sekolah (Kabupaten, NPSN, Jenjang, Status, Nama Sekolah) diambil dari
-tab **`ref`** di masing-masing spreadsheet — sheet referensi terpisah dari
-`Form responses 1`, berisi daftar resmi sekolah (mis. data BOS/BOSP). Kolom
-yang dipakai dari tab ini tetap di posisi D–H (Kab/Kota, NPSN, Jenjang,
-Status, Nama Sekolah) berdasarkan huruf kolom, karena sheet ini data
-referensi statis (bukan hasil form bercabang seperti `Form responses 1`)
-sehingga posisinya stabil. Baris header (jika ada — sebagian tab `ref`
+Data sekolah (Kabupaten, NPSN, Jenjang, Status, Nama Sekolah, Nama Gugus)
+diambil dari tab **`ref`** di masing-masing spreadsheet — sheet referensi
+terpisah dari `Form responses 1`, berisi daftar resmi sekolah (mis. data
+BOS/BOSP). Kolom yang dipakai dari tab ini tetap di posisi D–H (Kab/Kota,
+NPSN, Jenjang, Status, Nama Sekolah) dan R (Gugus Belajar → Nama Gugus)
+berdasarkan huruf kolom, karena sheet ini data referensi statis (bukan
+hasil form bercabang seperti `Form responses 1`) sehingga posisinya
+stabil. Baris header (jika ada — sebagian tab `ref`
 punya baris header, sebagian tidak) otomatis terdeteksi dan dibuang: baris
 yang nilai NPSN-nya bukan berupa angka (atau "P" + angka untuk PKBM)
 dianggap bukan data sekolah.
@@ -117,7 +118,7 @@ akan tetap ditampilkan dengan jumlah 0 di semua kolom Bimtek; sebaliknya,
 entri respons form dengan NPSN yang tidak ditemukan di tab `ref` akan
 diabaikan (tidak memunculkan baris baru).
 
-Tabel ini bisa dicari (kabupaten/NPSN/nama sekolah), diurutkan per kolom,
+Tabel ini bisa dicari (kabupaten/NPSN/nama sekolah/nama gugus), diurutkan per kolom,
 dan dipaginasi, dengan auto-refresh yang sama seperti dashboard.
 
 ## Fitur
