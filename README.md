@@ -93,11 +93,11 @@ setiap halaman (termasuk halaman baru itu sendiri).
 `rekap-dikdas.html` dan `rekap-dikmen.html` (dipakai bersama lewat
 `rekap.js`, terpisah dari `app.js` karena bentuk datanya beda) menampilkan
 satu baris per sekolah dengan kolom: Kabupaten, NPSN, Nama Sekolah, Jenjang,
-Status, Nama Gugus, lalu Tanggal + jumlah peserta berpasangan untuk tiap
-Jenis Bimtek (Tanggal Bimtek Tata Kelola (SPMI) & Bimtek Tata Kelola
-(SPMI), Tanggal Bimtek Literasi Numerasi & Bimtek Literasi Numerasi,
-Tanggal Bimtek Digitalisasi Pembelajaran & Bimtek Digitalisasi
-Pembelajaran).
+Status, Nama Gugus, lalu Tanggal + Jumlah Peserta berpasangan untuk tiap
+Jenis Bimtek (Tanggal Bimtek Tata Kelola (SPMI) & Jumlah Peserta Bimtek
+Tata Kelola (SPMI), Tanggal Bimtek Literasi Numerasi & Jumlah Peserta
+Bimtek Literasi Numerasi, Tanggal Bimtek Digitalisasi Pembelajaran &
+Jumlah Peserta Bimtek Digitalisasi Pembelajaran).
 
 Data sekolah (Kabupaten, NPSN, Jenjang, Status, Nama Sekolah, Nama Gugus,
 Tanggal Bimtek per jenis) diambil dari tab **`ref`** di masing-masing
