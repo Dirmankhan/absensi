@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rekap Kehadiran per Sekolah</title>
+<!-- Naikkan ?v=N di sini dan di <script> rekap.js setiap deploy, agar
+     browser/CDN tidak menyajikan rekap.js atau styles.css versi lama. -->
+<link rel="stylesheet" href="styles.css?v=19" />
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="topbar-title">
+        <h1>Rekap Kehadiran per Sekolah</h1>
+        <p class="subtitle">Jumlah peserta hadir per sekolah, dihitung dari Form Responses berdasarkan NPSN</p>
+      </div>
+      <div class="topbar-actions">
+        <span class="sync-status" id="syncStatus">Belum sinkron</span>
+        <button class="btn btn-ghost" id="themeToggle" type="button" aria-label="Ganti tema">🌓</button>
+        <button class="btn btn-primary" id="refreshBtn" type="button">Muat Ulang</button>
+      </div>
+    </header>
+
+    <nav class="page-nav" aria-label="Pilih jenjang">
+      <a href="rekap-dikdas.html" class="page-nav-link is-active">Dikdas (PAUD, SD, SMP, SKB, PKBM)</a>
+      <a href="rekap-dikmen.html" class="page-nav-link">Dikmen (SMA, SMK, SLB)</a>
+    </nav>
+    <nav class="page-nav view-nav" aria-label="Pilih tampilan">
+      <a href="index.html" class="page-nav-link">Dashboard</a>
+      <a href="rekap-dikdas.html" class="page-nav-link is-active">Rekap Sekolah</a>
+    </nav>
+
+    <main>
+      <section class="banner banner-error" id="errorBanner" hidden></section>
+
+      <section class="table-card" aria-label="Rekap kehadiran per sekolah">
+        <div class="table-toolbar">
+          <h2>Rekap Sekolah (<span id="tableCount">0</span> sekolah)</h2>
+          <input id="filterSekolah" type="search" placeholder="Cari kabupaten, NPSN, atau nama sekolah…" />
+        </div>
+        <div class="table-scroll">
+          <table id="rekapTable">
+            <thead>
+              <tr>
+                <th data-key="kabKota">Kabupaten</th>
+                <th data-key="npsn">NPSN</th>
+                <th data-key="namaSekolah">Nama Sekolah</th>
+                <th data-key="jenjang">Jenjang</th>
+                <th data-key="status">Status</th>
+                <th data-key="c0">Bimtek Tata Kelola (SPMI)</th>
+                <th data-key="c1">Bimtek Literasi Numerasi</th>
+                <th data-key="c2">Bimtek Digitalisasi Pembelajaran</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px;">Memuat data…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-pagination">
+          <button class="btn btn-ghost" id="prevPage" type="button">‹ Sebelumnya</button>
+          <span id="pageInfo">Halaman 1</span>
+          <button class="btn btn-ghost" id="nextPage" type="button">Berikutnya ›</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="page-footer">
+      <span>Sumber data: <a id="sheetLink" href="#" target="_blank" rel="noopener">Google Sheets</a></span>
+    </footer>
+  </div>
+
+  <script>
+    window.DASHBOARD_CONFIG = {
+      sheetId: '1U5VCWds37zRfDwAblrBV2kwTPURpR38kZ2Hc-0GYPDc',
+      sheetName: 'Form responses 1',
+      refSheetName: 'ref',
+    };
+  </script>
+  <script src="rekap.js?v=1"></script>
+</body>
+</html>

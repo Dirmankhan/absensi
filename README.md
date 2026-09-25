@@ -1,13 +1,17 @@
 # Dashboard Absensi Bimtek
 
 Dashboard statis (tanpa backend) yang menampilkan data absensi peserta Bimtek
-secara langsung dari Google Sheets. Ada dua halaman dengan tampilan identik,
-masing-masing membaca sheet sumber yang berbeda:
+secara langsung dari Google Sheets. Ada empat halaman: dua dashboard dan dua
+rekap sekolah, masing-masing pasangan (Dikdas/Dikmen) membaca sheet sumber
+yang berbeda:
 
-- **index.html** — Jenjang **Dikdas** (PAUD, SD, SMP, SKB, PKBM):
+- **index.html** — Dashboard jenjang **Dikdas** (PAUD, SD, SMP, SKB, PKBM):
   https://docs.google.com/spreadsheets/d/1U5VCWds37zRfDwAblrBV2kwTPURpR38kZ2Hc-0GYPDc/edit
-- **dikmen.html** — Jenjang **Dikmen** (SMA, SMK, SLB):
+- **dikmen.html** — Dashboard jenjang **Dikmen** (SMA, SMK, SLB):
   https://docs.google.com/spreadsheets/d/10q5lThIX8ZQSNzLjgharF95ah0MUKxNSKFC4YbDMBEQ/edit
+- **rekap-dikdas.html** / **rekap-dikmen.html** — Rekap jumlah peserta hadir
+  per sekolah untuk masing-masing jenjang (lihat bagian "Rekap Kehadiran per
+  Sekolah" di bawah).
 
 Kolom yang ditampilkan di tabel Data Absensi: **Nama Peserta, Jabatan,
 Jenis Bimtek, Kab/Kota, Jenjang Sekolah, NPSN, Nama Sekolah, Nama
@@ -45,7 +49,9 @@ halaman tanpa perlu tahu bentuk sheet mana yang sedang dibuka.
 
 Kedua sheet **wajib** dibagikan sebagai "Siapa saja yang memiliki link"
 (Anyone with the link — minimal Viewer), karena data diambil langsung dari
-browser pengunjung tanpa login.
+browser pengunjung tanpa login. Halaman rekap sekolah butuh tab tambahan
+bernama **`ref`** di masing-masing spreadsheet (lihat bagian "Rekap
+Kehadiran per Sekolah").
 
 ## Menjalankan secara lokal
 
@@ -82,6 +88,38 @@ Untuk menambah halaman jenjang baru: salin `dikmen.html`, ganti `sheetId`
 di skrip tersebut, dan tambahkan tautan ke `<nav class="page-nav">` di
 setiap halaman (termasuk halaman baru itu sendiri).
 
+## Rekap Kehadiran per Sekolah
+
+`rekap-dikdas.html` dan `rekap-dikmen.html` (dipakai bersama lewat
+`rekap.js`, terpisah dari `app.js` karena bentuk datanya beda) menampilkan
+satu baris per sekolah dengan kolom: Kabupaten, NPSN, Nama Sekolah, Jenjang,
+Status, dan jumlah peserta untuk tiap Jenis Bimtek (Bimtek Tata Kelola
+(SPMI), Bimtek Literasi Numerasi, Bimtek Digitalisasi Pembelajaran).
+
+Data sekolah (Kabupaten, NPSN, Jenjang, Status, Nama Sekolah) diambil dari
+tab **`ref`** di masing-masing spreadsheet — sheet referensi terpisah dari
+`Form responses 1`, berisi daftar resmi sekolah (mis. data BOS/BOSP). Kolom
+yang dipakai dari tab ini tetap di posisi D–H (Kab/Kota, NPSN, Jenjang,
+Status, Nama Sekolah) berdasarkan huruf kolom, karena sheet ini data
+referensi statis (bukan hasil form bercabang seperti `Form responses 1`)
+sehingga posisinya stabil. Baris header (jika ada — sebagian tab `ref`
+punya baris header, sebagian tidak) otomatis terdeteksi dan dibuang: baris
+yang nilai NPSN-nya bukan berupa angka (atau "P" + angka untuk PKBM)
+dianggap bukan data sekolah.
+
+Jumlah peserta per sekolah dihitung dari tab `Form responses 1`,
+dikelompokkan berdasarkan NPSN peserta (dicocokkan dengan kolom hasil akhir
+"NPSN" atau dipisah dari kolom cabang "NPSN - Nama Sekolah", sama seperti
+logika di `app.js` — bukan huruf kolom tetap, karena kolom ini bisa
+bergeser seiring pertumbuhan form) dan Jenis Bimtek yang dipilih peserta.
+Sekolah di tab `ref` yang NPSN-nya tidak muncul sama sekali di respons form
+akan tetap ditampilkan dengan jumlah 0 di semua kolom Bimtek; sebaliknya,
+entri respons form dengan NPSN yang tidak ditemukan di tab `ref` akan
+diabaikan (tidak memunculkan baris baru).
+
+Tabel ini bisa dicari (kabupaten/NPSN/nama sekolah), diurutkan per kolom,
+dan dipaginasi, dengan auto-refresh yang sama seperti dashboard.
+
 ## Fitur
 
 - Dua halaman dengan tampilan identik untuk Dikdas dan Dikmen, dengan
@@ -102,3 +140,6 @@ setiap halaman (termasuk halaman baru itu sendiri).
 - Tampilan default cerah/terang dengan tema biru muda (tombol 🌓 untuk
   beralih ke gelap).
 - Auto-refresh tiap 60 detik + tombol muat ulang manual.
+- Halaman **Rekap Sekolah** (tautan di nav "Dashboard / Rekap Sekolah"):
+  jumlah peserta hadir per sekolah per Jenis Bimtek, digabung dari tab
+  referensi sekolah (`ref`) dan hasil hitung `Form responses 1`.
