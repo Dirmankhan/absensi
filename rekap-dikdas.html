@@ -6,7 +6,7 @@
 <title>Rekap Kehadiran per Sekolah</title>
 <!-- Naikkan ?v=N di sini dan di <script> rekap.js setiap deploy, agar
      browser/CDN tidak menyajikan rekap.js atau styles.css versi lama. -->
-<link rel="stylesheet" href="styles.css?v=19" />
+<link rel="stylesheet" href="styles.css?v=20" />
 </head>
 <body>
   <div class="page">
@@ -22,13 +22,13 @@
       </div>
     </header>
 
-    <nav class="page-nav" aria-label="Pilih jenjang">
-      <a href="rekap-dikdas.html" class="page-nav-link is-active">Dikdas (PAUD, SD, SMP, SKB, PKBM)</a>
-      <a href="rekap-dikmen.html" class="page-nav-link">Dikmen (SMA, SMK, SLB)</a>
-    </nav>
     <nav class="page-nav view-nav" aria-label="Pilih tampilan">
       <a href="index.html" class="page-nav-link">Dashboard</a>
       <a href="rekap-dikdas.html" class="page-nav-link is-active">Rekap Sekolah</a>
+    </nav>
+    <nav class="page-nav" aria-label="Pilih jenjang">
+      <a href="rekap-dikdas.html" class="page-nav-link is-active">Dikdas (PAUD, SD, SMP, SKB, PKBM)</a>
+      <a href="rekap-dikmen.html" class="page-nav-link">Dikmen (SMA, SMK, SLB)</a>
     </nav>
 
     <main>
@@ -78,6 +78,6 @@
       refSheetName: 'ref',
     };
   </script>
-  <script src="rekap.js?v=1"></script>
+  <script src="rekap.js?v=2"></script>
 </body>
 </html>
