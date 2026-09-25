@@ -218,7 +218,15 @@ function fillSelect(id, options) {
 
 function populateFilterOptions() {
   fillSelect('filterKabkota', uniqueSorted(allSchools.map((r) => r.kabKota)));
-  fillSelect('filterGugus', uniqueSorted(allSchools.map((r) => r.namaGugus)));
+  updateGugusOptions();
+}
+
+// Nama Gugus dibatasi hanya yang ada di Kabupaten terpilih (jika ada),
+// dipanggil ulang setiap kali pilihan Kabupaten berubah.
+function updateGugusOptions() {
+  const kab = el('filterKabkota').value;
+  const scoped = kab ? allSchools.filter((r) => r.kabKota === kab) : allSchools;
+  fillSelect('filterGugus', uniqueSorted(scoped.map((r) => r.namaGugus)));
 }
 
 // ---- Tabel: filter, sort, paginasi -----------------------------------------
@@ -332,14 +340,20 @@ el('filterSekolah').addEventListener('input', () => {
   currentPage = 1;
   renderTable();
 });
-['filterKabkota', 'filterGugus'].forEach((id) => el(id).addEventListener('change', () => {
+el('filterKabkota').addEventListener('change', () => {
+  updateGugusOptions();
   currentPage = 1;
   renderTable();
-}));
+});
+el('filterGugus').addEventListener('change', () => {
+  currentPage = 1;
+  renderTable();
+});
 el('resetFilters').addEventListener('click', () => {
   el('filterKabkota').value = '';
-  el('filterGugus').value = '';
   el('filterSekolah').value = '';
+  updateGugusOptions();
+  el('filterGugus').value = '';
   currentPage = 1;
   renderTable();
 });
