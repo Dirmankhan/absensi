@@ -332,6 +332,11 @@ th.count-col {
   width: 84px;
   line-height: 1.25;
 }
+th.wrap-col, td.wrap-col {
+  white-space: normal;
+}
+th.wrap-col.kab-col { width: 100px; }
+th.wrap-col.sekolah-col { width: 150px; }
 th {
   color: var(--text-secondary);
   font-weight: 600;

@@ -12,7 +12,7 @@
 <title>Rekap Kehadiran per Sekolah</title>
 <!-- Naikkan ?v=N di sini dan di <script> rekap.js setiap deploy, agar
      browser/CDN tidak menyajikan rekap.js atau styles.css versi lama. -->
-<link rel="stylesheet" href="styles.css?v=24" />
+<link rel="stylesheet" href="styles.css?v=25" />
 </head>
 <body>
   <div class="page">
@@ -49,9 +49,9 @@
           <table id="rekapTable">
             <thead>
               <tr>
-                <th data-key="kabKota">Kabupaten</th>
+                <th data-key="kabKota" class="wrap-col kab-col">Kabupaten</th>
                 <th data-key="npsn">NPSN</th>
-                <th data-key="namaSekolah">Nama Sekolah</th>
+                <th data-key="namaSekolah" class="wrap-col sekolah-col">Nama Sekolah</th>
                 <th data-key="jenjang">Jenjang</th>
                 <th data-key="status">Status</th>
                 <th data-key="namaGugus">Nama Gugus</th>
@@ -88,6 +88,6 @@
       refSheetName: 'ref',
     };
   </script>
-  <script src="rekap.js?v=5"></script>
+  <script src="rekap.js?v=6"></script>
 </body>
 </html>

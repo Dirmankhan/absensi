@@ -253,9 +253,9 @@ function renderTable() {
 
   tbody.innerHTML = pageRows.map((r) => `
     <tr>
-      <td>${escapeHtml(r.kabKota)}</td>
+      <td class="wrap-col">${escapeHtml(r.kabKota)}</td>
       <td>${escapeHtml(r.npsn)}</td>
-      <td>${escapeHtml(r.namaSekolah)}</td>
+      <td class="wrap-col">${escapeHtml(r.namaSekolah)}</td>
       <td>${escapeHtml(r.jenjang)}</td>
       <td>${escapeHtml(r.status)}</td>
       <td>${escapeHtml(r.namaGugus)}</td>
