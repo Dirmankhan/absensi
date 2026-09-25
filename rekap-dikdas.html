@@ -40,6 +40,20 @@
     <main>
       <section class="banner banner-error" id="errorBanner" hidden></section>
 
+      <section class="filter-bar" aria-label="Filter rekap sekolah">
+        <div class="filter-grid">
+          <div class="filter-field">
+            <label for="filterKabkota">Kabupaten</label>
+            <select id="filterKabkota"><option value="">Semua</option></select>
+          </div>
+          <div class="filter-field">
+            <label for="filterGugus">Nama Gugus</label>
+            <select id="filterGugus"><option value="">Semua</option></select>
+          </div>
+        </div>
+        <button class="btn btn-ghost" id="resetFilters" type="button">Reset Filter</button>
+      </section>
+
       <section class="table-card" aria-label="Rekap kehadiran per sekolah">
         <div class="table-toolbar">
           <h2>Rekap Sekolah (<span id="tableCount">0</span> sekolah)</h2>
@@ -89,6 +103,6 @@
       refSheetName: 'ref',
     };
   </script>
-  <script src="rekap.js?v=8"></script>
+  <script src="rekap.js?v=9"></script>
 </body>
 </html>

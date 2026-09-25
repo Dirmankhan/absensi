@@ -204,10 +204,31 @@ function hideError() {
   el('errorBanner').hidden = true;
 }
 
+// ---- Filter dropdown Kabupaten & Nama Gugus --------------------------------
+function uniqueSorted(list) {
+  return Array.from(new Set(list.filter(Boolean))).sort((a, b) => a.localeCompare(b, 'id'));
+}
+
+function fillSelect(id, options) {
+  const select = el(id);
+  const current = select.value;
+  select.innerHTML = '<option value="">Semua</option>' + options.map((o) => `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('');
+  if (options.includes(current)) select.value = current;
+}
+
+function populateFilterOptions() {
+  fillSelect('filterKabkota', uniqueSorted(allSchools.map((r) => r.kabKota)));
+  fillSelect('filterGugus', uniqueSorted(allSchools.map((r) => r.namaGugus)));
+}
+
 // ---- Tabel: filter, sort, paginasi -----------------------------------------
 function getRows() {
   const q = el('filterSekolah').value.trim().toLowerCase();
+  const kab = el('filterKabkota').value;
+  const gugus = el('filterGugus').value;
   let rows = allSchools;
+  if (kab) rows = rows.filter((r) => r.kabKota === kab);
+  if (gugus) rows = rows.filter((r) => r.namaGugus === gugus);
   if (q) {
     rows = rows.filter((r) =>
       r.npsn.toLowerCase().includes(q) ||
@@ -311,6 +332,17 @@ el('filterSekolah').addEventListener('input', () => {
   currentPage = 1;
   renderTable();
 });
+['filterKabkota', 'filterGugus'].forEach((id) => el(id).addEventListener('change', () => {
+  currentPage = 1;
+  renderTable();
+}));
+el('resetFilters').addEventListener('click', () => {
+  el('filterKabkota').value = '';
+  el('filterGugus').value = '';
+  el('filterSekolah').value = '';
+  currentPage = 1;
+  renderTable();
+});
 el('exportBtn').addEventListener('click', exportExcel);
 el('prevPage').addEventListener('click', () => {
   if (currentPage > 1) {
@@ -342,6 +374,7 @@ async function refresh() {
       return { ...s, counts: JENIS_BIMTEK_COLUMNS.map((jenis) => bucket[jenis] || 0) };
     });
     hideError();
+    populateFilterOptions();
     currentPage = 1;
     renderTable();
     el('syncStatus').textContent = `Tersinkron ${formatTimestamp(new Date())}`;
