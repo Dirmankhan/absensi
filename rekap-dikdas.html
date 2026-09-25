@@ -43,7 +43,8 @@
       <section class="table-card" aria-label="Rekap kehadiran per sekolah">
         <div class="table-toolbar">
           <h2>Rekap Sekolah (<span id="tableCount">0</span> sekolah)</h2>
-          <input id="filterSekolah" type="search" placeholder="Cari kabupaten, NPSN, atau nama sekolah…" />
+          <input id="filterSekolah" type="search" placeholder="Cari NPSN atau nama sekolah…" />
+          <button class="btn btn-ghost" id="exportBtn" type="button">Ekspor Excel</button>
         </div>
         <div class="table-scroll">
           <table id="rekapTable">
@@ -88,6 +89,6 @@
       refSheetName: 'ref',
     };
   </script>
-  <script src="rekap.js?v=6"></script>
+  <script src="rekap.js?v=7"></script>
 </body>
 </html>

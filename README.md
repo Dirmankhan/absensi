@@ -122,8 +122,10 @@ akan tetap ditampilkan dengan jumlah 0 di semua kolom Bimtek; sebaliknya,
 entri respons form dengan NPSN yang tidak ditemukan di tab `ref` akan
 diabaikan (tidak memunculkan baris baru).
 
-Tabel ini bisa dicari (kabupaten/NPSN/nama sekolah/nama gugus), diurutkan per kolom,
-dan dipaginasi, dengan auto-refresh yang sama seperti dashboard.
+Tabel ini bisa dicari (NPSN/nama sekolah), diurutkan per kolom, dipaginasi,
+dan diekspor ke Excel (CSV, mengikuti pencarian aktif — tombol ekspor
+hanya berjalan saat diklik, tidak otomatis), dengan auto-refresh yang sama
+seperti dashboard.
 
 ## Fitur
 

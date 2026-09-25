@@ -210,10 +210,8 @@ function getRows() {
   let rows = allSchools;
   if (q) {
     rows = rows.filter((r) =>
-      r.kabKota.toLowerCase().includes(q) ||
       r.npsn.toLowerCase().includes(q) ||
-      r.namaSekolah.toLowerCase().includes(q) ||
-      r.namaGugus.toLowerCase().includes(q)
+      r.namaSekolah.toLowerCase().includes(q)
     );
   }
   return [...rows].sort((a, b) => {
@@ -269,6 +267,32 @@ function renderTable() {
   `).join('');
 }
 
+// Ekspor ke format CSV (dibuka langsung oleh Excel) — mengikuti pencarian
+// aktif tapi tidak dibatasi paginasi, hanya berjalan saat tombol diklik.
+function exportExcel() {
+  const header = [
+    'Kabupaten', 'NPSN', 'Nama Sekolah', 'Jenjang', 'Status', 'Nama Gugus',
+    'Tanggal Bimtek Tata Kelola (SPMI)', 'Jumlah Peserta Bimtek Tata Kelola (SPMI)',
+    'Tanggal Bimtek Literasi Numerasi', 'Jumlah Peserta Bimtek Literasi Numerasi',
+    'Tanggal Bimtek Digitalisasi Pembelajaran', 'Jumlah Peserta Bimtek Digitalisasi Pembelajaran',
+  ];
+  const csvEscape = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const lines = [header.map(csvEscape).join(',')];
+  getRows().forEach((r) => {
+    lines.push([
+      r.kabKota, r.npsn, r.namaSekolah, r.jenjang, r.status, r.namaGugus,
+      r.tanggalSpmi, r.counts[0], r.tanggalLiterasi, r.counts[1], r.tanggalDigitalisasi, r.counts[2],
+    ].map(csvEscape).join(','));
+  });
+  const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `rekap-sekolah-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 document.querySelectorAll('#rekapTable th').forEach((th) => {
   th.addEventListener('click', () => {
     const key = th.dataset.key;
@@ -287,6 +311,7 @@ el('filterSekolah').addEventListener('input', () => {
   currentPage = 1;
   renderTable();
 });
+el('exportBtn').addEventListener('click', exportExcel);
 el('prevPage').addEventListener('click', () => {
   if (currentPage > 1) {
     currentPage -= 1;
